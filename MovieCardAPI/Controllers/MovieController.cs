@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MovieCardAPI.Constants;
-using System.Text.Json;
+using MovieCardAPI.Model.Service;
 
 namespace MovieCardAPI.Controllers;
 
@@ -8,21 +8,23 @@ namespace MovieCardAPI.Controllers;
 [ApiController]
 public class MovieController : ControllerBase
 {
-    private static readonly string[] Movies = new[]
-    {
-        "movie1"
-    };
-
     private readonly ILogger<MovieController> _logger;
 
-    public MovieController(ILogger<MovieController> logger)
+    private readonly IMovieService _service;
+    
+    public MovieController(
+        ILogger<MovieController> logger,
+        IMovieService service)
     {
-        _logger = logger;
+        _service = service ?? throw new ArgumentNullException(nameof(service));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
+
 
     [HttpGet(Name = "GetMovies")]
     public async Task<ActionResult<IEnumerable<string>>> GetMovies()
     {
-        return Ok(Movies ?? []);
+        var movieCardDTOs = await _service.GetMovies();
+        return Ok(movieCardDTOs);
     }
 }
