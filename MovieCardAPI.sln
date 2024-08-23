@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35219.272
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieCardAPI", "MovieCardAPI\MovieCardAPI.csproj", "{820979BC-EE9B-428E-BD0E-BDD58E2A43F4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{820979BC-EE9B-428E-BD0E-BDD58E2A43F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{820979BC-EE9B-428E-BD0E-BDD58E2A43F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{820979BC-EE9B-428E-BD0E-BDD58E2A43F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{820979BC-EE9B-428E-BD0E-BDD58E2A43F4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {67BF8BA7-6682-450C-8517-B8C8EF7B39EF}
+	EndGlobalSection
+EndGlobal

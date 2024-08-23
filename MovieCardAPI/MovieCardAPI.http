@@ -1,0 +1,6 @@
+@MovieCardAPI_HostAddress = http://localhost:5185
+
+GET {{MovieCardAPI_HostAddress}}/api/movie/
+Accept: application/json
+
+###
