@@ -25,7 +25,12 @@ public class MovieContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.EnableSensitiveDataLogging(true);
+        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+        if (environment == "Development")
+        {
+            optionsBuilder.EnableSensitiveDataLogging();
+        }
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

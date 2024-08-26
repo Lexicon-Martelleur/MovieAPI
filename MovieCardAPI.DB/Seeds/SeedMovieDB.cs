@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using Microsoft.EntityFrameworkCore;
+
 using MovieCardAPI.Constants;
 using MovieCardAPI.DB.Contexts;
 using MovieCardAPI.Entities;
@@ -119,9 +120,6 @@ public static class SeedMovieDB
         return movies;
     }
 
-    /**
-     * TODO Make Seeding of Actors random
-     */
     private static IEnumerable<MovieRole> CreateMovieRoles(
         IEnumerable<Actor> actors,
         IEnumerable<Movie> movies)
@@ -154,9 +152,6 @@ public static class SeedMovieDB
         return movieRoles;
     }
 
-    /**
-     * TODO Make Seeding of Genres random
-     */
     private static IEnumerable<MovieGenre> CreateMovieGenres(
         IEnumerable<Genre> genres,
         IEnumerable<Movie> movies)
