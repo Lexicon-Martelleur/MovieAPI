@@ -24,6 +24,8 @@ public class MovieController : ControllerBase
     [HttpGet(Name = "GetMovies")]
     public async Task<ActionResult<IEnumerable<string>>> GetMovies()
     {
+        // throw new ArgumentException();
+        return NotFound();
         var movieCardDTOs = await _service.GetMovies();
         return Ok(movieCardDTOs);
     }

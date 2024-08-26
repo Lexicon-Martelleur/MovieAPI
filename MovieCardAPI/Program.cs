@@ -3,19 +3,18 @@ using MovieCardAPI.Model.Service;
 using MovieCardAPI.Model.Repository;
 using MovieCardAPI.DB;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace MovieCardAPI;
 
 /**
- * TODO
- * 1. Set up global error management.
- * 2. Set up custom logging.
- * 3. Update model classes visibility level to internal if possible.
- * 4. Seed data only in development using
+ * TODO Configure WebApp and HTTP Pipeline
+ * 1. Update model classes visibility level to internal if possible.
+ * 2. Seed data only in development using
  *    async main, extension method; 
  *    Use University project as blueprint.
- * 5. Seed data with faker package Bogus.
- * 6. Log sensitive data in development.
+ * 3. Seed data with faker package Bogus.
+ * 4. Log sensitive data in development.
  */
 public class Program
 {
@@ -29,16 +28,14 @@ public class Program
     private static WebApplication CreateWebApplication(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
         AddDBService(builder);
-
+        AddCustomLogging(builder);
+        AddGlobalErrorHandling(builder);
         AddAppServices(builder);
-
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-
         return builder.Build();
     }
 
@@ -57,6 +54,39 @@ public class Program
         {
             Console.WriteLine($"Connection String: {connectionString}");
         }
+    }
+
+    private static void AddCustomLogging(WebApplicationBuilder builder)
+    {
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Debug()
+            .WriteTo.Console()
+            .WriteTo.File("logs/info.txt", rollingInterval: RollingInterval.Day)
+            .CreateLogger();
+
+        builder.Services.AddSerilog();
+    }
+
+    private static void AddGlobalErrorHandling(WebApplicationBuilder builder)
+    {
+        builder.Services.AddProblemDetails(options =>
+        {
+            options.CustomizeProblemDetails = context =>
+            {
+                if (context.Exception is NotImplementedException)
+                {
+                    context.ProblemDetails.Status = StatusCodes.Status503ServiceUnavailable;
+                    context.ProblemDetails.Title = "Resource not implemented";
+                    context.ProblemDetails.Detail = context.Exception.Message;
+                }
+                else if (context.Exception != null)
+                {
+                    context.ProblemDetails.Status = StatusCodes.Status500InternalServerError;
+                    context.ProblemDetails.Title = "An unexpected error occurred";
+                    context.ProblemDetails.Detail = "Please try again later.";
+                }
+            };
+        });
     }
 
     private static void AddAppServices(WebApplicationBuilder builder)
@@ -98,8 +128,6 @@ public class Program
             app.UseHttpsRedirection();
             app.UseExceptionHandler();
         }
-
-        app.UseHttpsRedirection();
 
         app.UseAuthorization();
 
