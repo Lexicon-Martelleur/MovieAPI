@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using MovieCardAPI.Constants;
 using MovieCardAPI.DB.Contexts;
 using MovieCardAPI.Entities;
-using System.IO;
 
 namespace MovieCardAPI.DB.Seeds;
 
@@ -11,9 +10,13 @@ public static class SeedMovieDB
 {
     public static async Task RunAsync(MovieContext context)
     {
-        if (await IsExistingData(context)) { return; }
+        if (await IsExistingMovieData(context)) {
+            return;
+        }
 
-        var genres = CreateGenres(10);
+        Console.WriteLine("Seeding Data");
+
+        var genres = CreateGenres();
         await context.AddRangeAsync(genres);
 
         var directors = CreateDirectors(10);
@@ -34,33 +37,21 @@ public static class SeedMovieDB
         await context.SaveChangesAsync();
     }
 
-    private static async Task<bool> IsExistingData(MovieContext context)
+    private static async Task<bool> IsExistingMovieData(MovieContext context)
     {
         return await context.Movies.AnyAsync();
     }
 
-    private static IEnumerable<Genre> CreateGenres(int nrOfGenres)
+    private static IEnumerable<Genre> CreateGenres()
     {
-        var genre = new List<Genre>();
+        var genres = new List<Genre>();
 
-        for (int i = 0; i < nrOfGenres; i++)
+        foreach (MovieGenreType genre in Enum.GetValues(typeof(MovieGenreType)))
         {
-            var fakeGenre = new Faker<Genre>("en").Rules((faker, genre) =>
-            {
-                Array values = Enum.GetValues(typeof(MovieGenreType));
-                Random random = new();
-                int randomIndex = random.Next(values.Length);
-                
-                var randomGenre = values.GetValue(randomIndex) is MovieGenreType genreType
-                    ? genreType
-                    : default;
-
-                genre.Name = randomGenre;
-            });
-            genre.Add(fakeGenre);
+            genres.Add(new Genre() { Name = genre });
         }
 
-        return genre;
+        return genres;
     }
 
     private static IEnumerable<Director> CreateDirectors(int nrOfDirectors)
@@ -141,19 +132,25 @@ public static class SeedMovieDB
 
         foreach (var movie in movies)
         {
-            int randomNrOfActors = random.Next(2, 10);
+            var availableActors = actors.ToList();
+            var selectedActors = new List<Actor>();
+            int randomNrOfActors = random.Next(1, Math.Min(4, availableActors.Count));
 
             for (int i = 0; i < randomNrOfActors; i++)
             {
-                var movieRole = new MovieRole
-                {
-                    Movie = movie,
-                    Actor = actors.ElementAt(i),
-                };
-
-                movieRoles.Add(movieRole);
+                int randomIndex = random.Next(availableActors.Count);
+                var selectedActor = availableActors[randomIndex];
+                selectedActors.Add(selectedActor);
+                availableActors.RemoveAt(randomIndex);
             }
+
+            movieRoles.AddRange(selectedActors.Select(actor => new MovieRole
+            {
+                Movie = movie,
+                Actor = actor,
+            }));
         }
+
         return movieRoles;
     }
 
@@ -165,24 +162,29 @@ public static class SeedMovieDB
         IEnumerable<Movie> movies)
     {
         var movieGenres = new List<MovieGenre>();
-
         var random = new Random();
 
         foreach (var movie in movies)
         {
-            int randomNrOfGenres = random.Next(1, 4);
+            var availableGenres = genres.ToList();
+            var selectedGenres = new List<Genre>();
+            int randomNrOfGenres = random.Next(1, Math.Min(4, availableGenres.Count));
 
             for (int i = 0; i < randomNrOfGenres; i++)
             {
-                var movieRole = new MovieGenre
-                {
-                    Movie = movie,
-                    Genre = genres.ElementAt(i),
-                };
-
-                movieGenres.Add(movieRole);
+                int randomIndex = random.Next(availableGenres.Count);
+                var selectedGenre = availableGenres[randomIndex];
+                selectedGenres.Add(selectedGenre);
+                availableGenres.RemoveAt(randomIndex);
             }
+
+            movieGenres.AddRange(selectedGenres.Select(genre => new MovieGenre
+            {
+                Movie = movie,
+                Genre = genre,
+            }));
         }
+
         return movieGenres;
     }
 }

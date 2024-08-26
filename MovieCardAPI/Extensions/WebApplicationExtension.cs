@@ -9,7 +9,6 @@ public static class WebApplicationExtension
     public static async Task UseDataSeedAsync(this IApplicationBuilder app)
     {
         using var scope = app.ApplicationServices.CreateScope();
-        Console.WriteLine("Seeding data");
         var serviceProvider = scope.ServiceProvider;
         var context = serviceProvider.GetRequiredService<MovieContext>();
 
