@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieCardAPI.DB.Contexts;
 
@@ -10,9 +11,11 @@ using MovieCardAPI.DB.Contexts;
 namespace MovieCardAPI.DB.Migrations
 {
     [DbContext(typeof(MovieContext))]
-    partial class MovieContextModelSnapshot : ModelSnapshot
+    [Migration("20240826092919_InitDB")]
+    partial class InitDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -20,27 +23,6 @@ namespace MovieCardAPI.DB.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("MovieCardAPI.Entities.Actor", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<long>("DateOfBirth")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Actor");
-                });
 
             modelBuilder.Entity("MovieCardAPI.Entities.ContactInformation", b =>
                 {
@@ -92,24 +74,6 @@ namespace MovieCardAPI.DB.Migrations
                     b.ToTable("Director");
                 });
 
-            modelBuilder.Entity("MovieCardAPI.Entities.Genre", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Genre");
-                });
-
             modelBuilder.Entity("MovieCardAPI.Entities.Movie", b =>
                 {
                     b.Property<int>("Id")
@@ -144,36 +108,6 @@ namespace MovieCardAPI.DB.Migrations
                     b.ToTable("Movies");
                 });
 
-            modelBuilder.Entity("MovieCardAPI.Entities.MovieGenre", b =>
-                {
-                    b.Property<int>("MovieId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GenreId")
-                        .HasColumnType("int");
-
-                    b.HasKey("MovieId", "GenreId");
-
-                    b.HasIndex("GenreId");
-
-                    b.ToTable("MovieGenre");
-                });
-
-            modelBuilder.Entity("MovieCardAPI.Entities.MovieRole", b =>
-                {
-                    b.Property<int>("MovieId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ActorId")
-                        .HasColumnType("int");
-
-                    b.HasKey("MovieId", "ActorId");
-
-                    b.HasIndex("ActorId");
-
-                    b.ToTable("MovieRole");
-                });
-
             modelBuilder.Entity("MovieCardAPI.Entities.ContactInformation", b =>
                 {
                     b.HasOne("MovieCardAPI.Entities.Director", "Director")
@@ -196,66 +130,11 @@ namespace MovieCardAPI.DB.Migrations
                     b.Navigation("Director");
                 });
 
-            modelBuilder.Entity("MovieCardAPI.Entities.MovieGenre", b =>
-                {
-                    b.HasOne("MovieCardAPI.Entities.Genre", "Genre")
-                        .WithMany("MovieGenre")
-                        .HasForeignKey("GenreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MovieCardAPI.Entities.Movie", "Movie")
-                        .WithMany("MovieGenre")
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Genre");
-
-                    b.Navigation("Movie");
-                });
-
-            modelBuilder.Entity("MovieCardAPI.Entities.MovieRole", b =>
-                {
-                    b.HasOne("MovieCardAPI.Entities.Actor", "Actor")
-                        .WithMany("MovieRoles")
-                        .HasForeignKey("ActorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MovieCardAPI.Entities.Movie", "Movie")
-                        .WithMany("MovieRoles")
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Actor");
-
-                    b.Navigation("Movie");
-                });
-
-            modelBuilder.Entity("MovieCardAPI.Entities.Actor", b =>
-                {
-                    b.Navigation("MovieRoles");
-                });
-
             modelBuilder.Entity("MovieCardAPI.Entities.Director", b =>
                 {
                     b.Navigation("ContactInformation");
 
                     b.Navigation("Movies");
-                });
-
-            modelBuilder.Entity("MovieCardAPI.Entities.Genre", b =>
-                {
-                    b.Navigation("MovieGenre");
-                });
-
-            modelBuilder.Entity("MovieCardAPI.Entities.Movie", b =>
-                {
-                    b.Navigation("MovieGenre");
-
-                    b.Navigation("MovieRoles");
                 });
 #pragma warning restore 612, 618
         }

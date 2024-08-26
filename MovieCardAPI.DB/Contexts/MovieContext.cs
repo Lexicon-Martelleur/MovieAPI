@@ -11,33 +11,39 @@ public class MovieContext : DbContext
         : base(options)
     { }
 
-    //protected override void OnModelCreating(ModelBuilder modelBuilder)
-    //{
-    //    modelBuilder.Entity<Movie>().HasData(
-    //        new Movie()
-    //        {
-    //            Id = 1,
-    //            Title = "T1",
-    //            Rating = 1,
-    //            TimeStamp = 1724414949,
-    //            Description = "d1"
-    //        },
-    //        new Movie()
-    //        {
-    //            Id = 2,
-    //            Title = "T2",
-    //            Rating = 2,
-    //            TimeStamp = 1724414949,
-    //            Description = "d2"
-    //        },
-    //        new Movie()
-    //        {
-    //            Id = 3,
-    //            Title = "T3",
-    //            Rating = 3,
-    //            TimeStamp = 1724414949,
-    //            Description = "d3"
-    //        }
-    //    );
-    //}
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        DefineMovieRoleKey(builder);
+        DefineMovieGenreKey(builder);
+        DescribeMovieRolesTable(builder);
+        DescribeMovieGenreTable(builder);        
+    }
+
+    private static void DefineMovieRoleKey(ModelBuilder builder)
+    {
+        builder.Entity<MovieRole>()
+            .HasKey(item => new { item.MovieId, item.ActorId });
+    }
+
+    private static void DefineMovieGenreKey(ModelBuilder builder)
+    {
+        builder.Entity<MovieGenre>()
+            .HasKey(item => new { item.MovieId, item.GenreId });
+    }
+
+    private static void DescribeMovieRolesTable(ModelBuilder builder)
+    {
+        builder.Entity<Movie>()
+            .HasMany(e => e.Actors)
+            .WithMany(e => e.Movies)
+            .UsingEntity<MovieRole>();
+    }
+
+    private static void DescribeMovieGenreTable(ModelBuilder builder)
+    {
+        builder.Entity<Movie>()
+            .HasMany(e => e.Genres)
+            .WithMany(e => e.Movies)
+            .UsingEntity<MovieGenre>();
+    }
 }

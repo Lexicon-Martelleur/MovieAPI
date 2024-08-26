@@ -10,8 +10,7 @@ namespace MovieCardAPI;
 
 /**
  * TODO Configure WebApp and HTTP Pipeline
- * 1. Update model classes visibility level to internal if possible.
- * 2. Log sensitive data in development.
+ * 1. Log sensitive data in development.
  */
 public class Program
 {

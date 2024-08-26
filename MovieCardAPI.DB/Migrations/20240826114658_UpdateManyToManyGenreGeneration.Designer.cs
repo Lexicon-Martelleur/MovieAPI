@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieCardAPI.DB.Contexts;
 
@@ -10,9 +11,11 @@ using MovieCardAPI.DB.Contexts;
 namespace MovieCardAPI.DB.Migrations
 {
     [DbContext(typeof(MovieContext))]
-    partial class MovieContextModelSnapshot : ModelSnapshot
+    [Migration("20240826114658_UpdateManyToManyGenreGeneration")]
+    partial class UpdateManyToManyGenreGeneration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -20,6 +23,21 @@ namespace MovieCardAPI.DB.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("ActorMovie", b =>
+                {
+                    b.Property<int>("ActorsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MoviesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ActorsId", "MoviesId");
+
+                    b.HasIndex("MoviesId");
+
+                    b.ToTable("ActorMovie");
+                });
 
             modelBuilder.Entity("MovieCardAPI.Entities.Actor", b =>
                 {
@@ -172,6 +190,21 @@ namespace MovieCardAPI.DB.Migrations
                     b.HasIndex("ActorId");
 
                     b.ToTable("MovieRole");
+                });
+
+            modelBuilder.Entity("ActorMovie", b =>
+                {
+                    b.HasOne("MovieCardAPI.Entities.Actor", null)
+                        .WithMany()
+                        .HasForeignKey("ActorsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MovieCardAPI.Entities.Movie", null)
+                        .WithMany()
+                        .HasForeignKey("MoviesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MovieCardAPI.Entities.ContactInformation", b =>
