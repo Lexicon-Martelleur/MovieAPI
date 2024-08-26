@@ -11,8 +11,8 @@ using MovieCardAPI.DB.Contexts;
 namespace MovieCardAPI.DB.Migrations
 {
     [DbContext(typeof(MovieContext))]
-    [Migration("20240826115059_UpdateManyToManyActorGeneration")]
-    partial class UpdateManyToManyActorGeneration
+    [Migration("20240826122740_initDB")]
+    partial class initDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -103,10 +103,8 @@ namespace MovieCardAPI.DB.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<int>("Name")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

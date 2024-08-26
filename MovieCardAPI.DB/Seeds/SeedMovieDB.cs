@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using Microsoft.EntityFrameworkCore;
+using MovieCardAPI.Constants;
 using MovieCardAPI.DB.Contexts;
 using MovieCardAPI.Entities;
 using System.IO;
@@ -46,7 +47,15 @@ public static class SeedMovieDB
         {
             var fakeGenre = new Faker<Genre>("en").Rules((faker, genre) =>
             {
-                genre.Name = faker.Lorem.Word();
+                Array values = Enum.GetValues(typeof(MovieGenreType));
+                Random random = new();
+                int randomIndex = random.Next(values.Length);
+                
+                var randomGenre = values.GetValue(randomIndex) is MovieGenreType genreType
+                    ? genreType
+                    : default;
+
+                genre.Name = randomGenre;
             });
             genre.Add(fakeGenre);
         }

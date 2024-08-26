@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
+using MovieCardAPI.Constants;
+
 namespace MovieCardAPI.Entities;
 
 public class Genre
@@ -10,8 +12,7 @@ public class Genre
     public int Id { get; set; }
 
     [Required]
-    [MaxLength(100)]
-    public string Name { get; set; }
+    public MovieGenreType Name { get; set; }
 
     // Navigation Prop
     public ICollection<Movie> Movies { get; set; }
