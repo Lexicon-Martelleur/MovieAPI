@@ -1,6 +1,6 @@
-﻿using MovieCardAPI.DB;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MovieCardAPI.Entities;
+using MovieCardAPI.DB.Contexts;
 
 namespace MovieCardAPI.Model.Repository;
 

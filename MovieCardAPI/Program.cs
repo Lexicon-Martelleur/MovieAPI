@@ -1,28 +1,25 @@
 
 using MovieCardAPI.Model.Service;
 using MovieCardAPI.Model.Repository;
-using MovieCardAPI.DB;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using MovieCardAPI.DB.Contexts;
+using MovieCardAPI.Extensions;
 
 namespace MovieCardAPI;
 
 /**
  * TODO Configure WebApp and HTTP Pipeline
  * 1. Update model classes visibility level to internal if possible.
- * 2. Seed data only in development using
- *    async main, extension method; 
- *    Use University project as blueprint.
- * 3. Seed data with faker package Bogus.
- * 4. Log sensitive data in development.
+ * 2. Log sensitive data in development.
  */
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var app = CreateWebApplication(args);
         TestDBConnection(app);
-        ConfigureWebApplicationPipeline(app);
+        await ConfigureWebApplicationPipeline(app);
     }
 
     private static WebApplication CreateWebApplication(string[] args)
@@ -61,7 +58,7 @@ public class Program
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Debug()
             .WriteTo.Console()
-            .WriteTo.File("logs/info.txt", rollingInterval: RollingInterval.Day)
+            .WriteTo.File("Logs/info.txt", rollingInterval: RollingInterval.Day)
             .CreateLogger();
 
         builder.Services.AddSerilog();
@@ -116,12 +113,13 @@ public class Program
         }
     }
 
-    private static void ConfigureWebApplicationPipeline(WebApplication app)
+    private async static Task ConfigureWebApplicationPipeline(WebApplication app)
     {
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
             app.UseSwaggerUI();
+            await app.UseDataSeedAsync();
         }
         else
         {
