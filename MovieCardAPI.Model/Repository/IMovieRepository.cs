@@ -29,4 +29,6 @@ public interface IMovieRepository
     Task UpdateMovieGenres(
         IEnumerable<int> newGenreIds,
         int movieId);
+    
+    Task DeleteMovie(int id);
 }

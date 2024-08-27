@@ -79,4 +79,15 @@ public class MovieService : IMovieService
 
         return _mapper.MapMovieEntityToMovieDTO(movieEntity);
     }
+
+    public async Task<bool> DeleteMovie(int id)
+    {
+        var movieEntity = await _repository.GetMovie(id);
+        if (movieEntity == null)
+        {
+            return false;
+        }
+        await _repository.DeleteMovie(id);
+        return await _repository.SaveChangesAsync();
+    }
 }

@@ -72,6 +72,11 @@ public class MovieController(
     [HttpDelete("{id}")]
     public async Task<ActionResult<MovieDTO>> DeleteMovie(int id)
     {
-        throw new NotImplementedException("_");
+        var isDeleted = await _service.DeleteMovie(id);
+        if (!isDeleted)
+        {
+            return NotFound();
+        }
+        return Ok();
     }
 }

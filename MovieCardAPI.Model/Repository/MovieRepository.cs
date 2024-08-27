@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MovieCardAPI.Entities;
 using MovieCardAPI.DB.Contexts;
-using MovieCardAPI.Constants;
 
 namespace MovieCardAPI.Model.Repository;
 
@@ -147,5 +146,18 @@ public class MovieRepository : IMovieRepository
             _context.MovieGenres.Add(movieGenreEntry);
         }
         await SaveChangesAsync();
+    }
+
+    public async Task DeleteMovie(int id)
+    {
+        var movieEntity = await _context.Movies
+            .Where(item => item.Id == id)
+            .FirstOrDefaultAsync();
+
+        if (movieEntity == default)
+        {
+            return;
+        }
+        _context.Movies.Remove(movieEntity);
     }
 }

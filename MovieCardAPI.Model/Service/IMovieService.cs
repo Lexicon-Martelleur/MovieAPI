@@ -11,4 +11,5 @@ public interface IMovieService
 
     public Task<MovieDTO?> CreateMovie(MovieForCreationDTO movie);
     Task<MovieDTO?> UpdateMovie(int id, MovieForUpdateDTO movie);
+    Task<bool> DeleteMovie(int id);
 }
