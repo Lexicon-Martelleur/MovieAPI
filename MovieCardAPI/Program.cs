@@ -17,6 +17,11 @@ namespace MovieCardAPI;
  */
 public class Program
 {
+    private static readonly (string Dev, string Prod) CorsPolicies = (
+        Dev: "DevCorsPolicy",
+        Prod: "ProdCorsPolicy"
+    );
+
     public static async Task Main(string[] args)
     {
         var app = CreateWebApplication(args);
@@ -33,6 +38,7 @@ public class Program
         AddAppServices(builder);
         builder.Services.AddControllers();
         AddSwaggerService(builder);
+        AddCorsPolicy(builder);
         return builder.Build();
     }
 
@@ -121,8 +127,31 @@ public class Program
         }
     }
 
+    private static void AddCorsPolicy(WebApplicationBuilder builder)
+    {
+
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(CorsPolicies.Dev, builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
+
+            options.AddPolicy(CorsPolicies.Prod, builder =>
+            {
+                builder.WithOrigins("https://my-movie-card.org")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
+        });
+    }
+
     private async static Task ConfigureWebApplicationPipeline(WebApplication app)
     {
+        UseCorsPolicy(app);
+
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
@@ -141,4 +170,17 @@ public class Program
 
         app.Run();
     }
+
+    private static void UseCorsPolicy(WebApplication app)
+    {
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseCors(CorsPolicies.Dev);
+        }
+        else
+        {
+            app.UseCors(CorsPolicies.Prod);
+        }
+    }
 }
+

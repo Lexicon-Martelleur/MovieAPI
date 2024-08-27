@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MovieCardAPI.Constants;
+using MovieCardAPI.Entities;
 using MovieCardAPI.Error;
 using MovieCardAPI.Model.DTO;
 using MovieCardAPI.Model.Service;
@@ -25,7 +26,9 @@ public class MovieController(
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<MovieDTO>> GetMovie(int id)
+    public async Task<ActionResult<MovieDTO>> GetMovie(
+        [FromRoute] int id
+    )
     {
         var movieDTO = await _service.GetMovie(id);
         if (movieDTO == null)
@@ -52,10 +55,18 @@ public class MovieController(
 
     [HttpPut("{id}")]
     public async Task<ActionResult<MovieDTO>> UpdateMovie(
-        int id,
+        [FromRoute] int id,
         [FromBody] MovieForUpdateDTO movie)
     {
-        throw new NotImplementedException("_");
+        var updatedMovie = await _service.UpdateMovie(id, movie);
+        if (updatedMovie == null)
+        {
+            return BadRequest(new ApiError(
+                HttpStatusCode.BadRequest,
+                "Failed to updated the movie. Please check the provided data and try again."
+            ));
+        }
+        return Ok(updatedMovie);
     }
 
     [HttpDelete("{id}")]

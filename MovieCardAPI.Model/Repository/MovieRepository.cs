@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MovieCardAPI.Entities;
 using MovieCardAPI.DB.Contexts;
+using MovieCardAPI.Constants;
 
 namespace MovieCardAPI.Model.Repository;
 
@@ -58,7 +59,7 @@ public class MovieRepository : IMovieRepository
     public async Task CreateMovie(
         Movie movie,
         IEnumerable<int> actorIds,
-        IEnumerable<int> genres)
+        IEnumerable<int> genreIds)
     {
         _context.Movies.Add(movie);
         await SaveChangesAsync();
@@ -72,7 +73,7 @@ public class MovieRepository : IMovieRepository
             });
         }
 
-        foreach (var id in genres)
+        foreach (var id in genreIds)
         {
             _context.MovieGenres.Add(new MovieGenre()
             {
@@ -80,5 +81,71 @@ public class MovieRepository : IMovieRepository
                 GenreId = id
             });
         }
+    }
+
+    public async Task UpdateMovieRoles(
+        IEnumerable<int> newActorIds,
+        int movieId)
+    {
+        var oldActorIds = await _context.MovieRoles
+            .Where(item => item.MovieId == movieId)
+            .Select(item => item.MovieId)
+            .ToListAsync();
+
+        foreach (var actorId in oldActorIds) {
+            var existingMovieRole = await _context.MovieRoles
+                .FirstOrDefaultAsync(role => 
+                    role.MovieId == movieId);
+            if (existingMovieRole != null) { 
+                _context.MovieRoles.Remove(existingMovieRole);
+            }
+            await SaveChangesAsync();
+        }
+
+        foreach (var actorId in newActorIds)
+        {
+            var movieRoleEntry = new MovieRole
+            {
+                MovieId = movieId,
+                ActorId = actorId
+            };
+
+            _context.MovieRoles.Add(movieRoleEntry);
+        }
+        await SaveChangesAsync();
+    }
+
+    public async Task UpdateMovieGenres(
+        IEnumerable<int> newGenreIds,
+        int movieId)
+    {
+        var oldGenresIds = await _context.MovieGenres
+            .Where(item => item.MovieId == movieId)
+            .Select(item => item.MovieId)
+            .ToListAsync();
+
+        foreach (var genreId in oldGenresIds)
+        {
+            var existingMovieGenre = await _context.MovieGenres
+                .FirstOrDefaultAsync(genre => 
+                    genre.MovieId == movieId);
+            if (existingMovieGenre != null)
+            {
+                _context.MovieGenres.Remove(existingMovieGenre);
+            }
+            await SaveChangesAsync();
+        }
+
+        foreach (var genreId in newGenreIds)
+        {
+            var movieGenreEntry = new MovieGenre
+            {
+                MovieId = movieId,
+                GenreId = genreId
+            };
+
+            _context.MovieGenres.Add(movieGenreEntry);
+        }
+        await SaveChangesAsync();
     }
 }

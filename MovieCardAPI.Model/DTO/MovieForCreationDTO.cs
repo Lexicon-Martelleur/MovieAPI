@@ -7,5 +7,5 @@ public record class MovieForCreationDTO(
     string Description,
     int DirectorId,
     int[] ActorIds,
-    int[] Genres
+    int[] GenreIds
 ) : BaseMovieDTO(Title, Rating, TimeStamp, Description);

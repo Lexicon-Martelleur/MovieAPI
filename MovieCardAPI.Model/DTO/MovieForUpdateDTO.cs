@@ -5,6 +5,7 @@ public record class MovieForUpdateDTO(
     int Rating,
     long TimeStamp,
     string Description,
+    int DirectorId,
     int[] ActorIds,
-    int[] Genres
+    int[] GenreIds
 ) : BaseMovieDTO(Title, Rating, TimeStamp, Description);

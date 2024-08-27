@@ -18,7 +18,15 @@ public interface IMovieRepository
     Task CreateMovie(
         Movie movie,
         IEnumerable<int> actorIds,
-        IEnumerable<int> genres);
+        IEnumerable<int> genreIds);
 
     Task<bool> SaveChangesAsync();
+
+    Task UpdateMovieRoles(
+        IEnumerable<int> newGenreIds,
+        int movieId);
+
+    Task UpdateMovieGenres(
+        IEnumerable<int> newGenreIds,
+        int movieId);
 }

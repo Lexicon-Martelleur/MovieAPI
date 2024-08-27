@@ -36,12 +36,47 @@ public class MovieService : IMovieService
         var movieEntity = _mapper.MapMovieForCreationDTOToMovieEntity(movie);
         if (!(await _repository.IsExistingDirector(movie.DirectorId)) ||
             !(await _repository.IsExistingActors(movie.ActorIds)) ||
-            !(await _repository.IsExistingGenres(movie.Genres)))
+            !(await _repository.IsExistingGenres(movie.GenreIds)))
         {
             return null;
         }
-        await _repository.CreateMovie(movieEntity, movie.ActorIds, movie.Genres);
+        await _repository.CreateMovie(movieEntity, movie.ActorIds, movie.GenreIds);
         await _repository.SaveChangesAsync();
+        return _mapper.MapMovieEntityToMovieDTO(movieEntity);
+    }
+
+    public async Task<MovieDTO?> UpdateMovie(int id, MovieForUpdateDTO movie)
+    {
+        if (!(await _repository.IsExistingDirector(movie.DirectorId)) ||
+            !(await _repository.IsExistingActors(movie.ActorIds)) ||
+            !(await _repository.IsExistingGenres(movie.GenreIds)))
+        {
+            return null;
+        }
+
+        var movieEntity = await _repository.GetMovie(id);
+        if (movieEntity == null)
+        {
+            return null;
+        }
+
+
+        await _repository.UpdateMovieRoles(
+            movie.ActorIds,
+            movieEntity.Id);
+
+        await _repository.UpdateMovieGenres(
+            movie.GenreIds,
+            movieEntity.Id);
+
+        movieEntity.Title = movie.Title;
+        movieEntity.Rating = movie.Rating;
+        movieEntity.TimeStamp = movie.TimeStamp;
+        movieEntity.Description = movie.Description;
+        movieEntity.DirectorId = movie.DirectorId;
+
+        await _repository.SaveChangesAsync();
+
         return _mapper.MapMovieEntityToMovieDTO(movieEntity);
     }
 }
