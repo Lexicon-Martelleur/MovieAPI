@@ -5,4 +5,6 @@ namespace MovieCardAPI.Model.Repository;
 public interface IMovieRepository
 {
     public Task<IEnumerable<Movie>> GetMovies();
+
+    public Task<Movie?> GetMovie(int id);
 }

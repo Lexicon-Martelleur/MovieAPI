@@ -1,6 +1,6 @@
 ﻿namespace MovieCardAPI.Model.DTO;
 
-public record class MovieCardDTO(
+public record class MovieDTO(
     int Id,
     string Title,
     int Rating,

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MovieCardAPI.Constants;
+using MovieCardAPI.Model.DTO;
 using MovieCardAPI.Model.Service;
 
 namespace MovieCardAPI.Controllers;
@@ -15,9 +16,20 @@ public class MovieController(
     private readonly IMovieService _service = service ?? throw new ArgumentNullException(nameof(service));
 
     [HttpGet(Name = "GetMovies")]
-    public async Task<ActionResult<IEnumerable<string>>> GetMovies()
+    public async Task<ActionResult<IEnumerable<MovieDTO>>> GetMovies()
     {
-        var movieCardDTOs = await _service.GetMovies();
-        return Ok(movieCardDTOs);
+        var movieDTOs = await _service.GetMovies();
+        return Ok(movieDTOs);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<MovieDTO>> GetMovie(int id)
+    {
+        var movieDTO = await _service.GetMovie(id);
+        if (movieDTO == null)
+        {
+            return NotFound(movieDTO);
+        }
+        return Ok(movieDTO);
     }
 }

@@ -2,5 +2,5 @@
 
 internal class Router
 {
-    internal const string MOVIE = "api/movie";
+    internal const string MOVIE = "api/movies";
 }

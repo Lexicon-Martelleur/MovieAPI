@@ -1,25 +1,34 @@
-﻿using MovieCardAPI.Model.DTO;
+﻿using MovieCardAPI.Entities;
+using MovieCardAPI.Model.DTO;
 using MovieCardAPI.Model.Repository;
+using MovieCardAPI.Model.Utility;
 
 namespace MovieCardAPI.Model.Service;
 
 public class MovieService : IMovieService
 {
     private readonly IMovieRepository _repository;
-    public MovieService(IMovieRepository repository)
+
+    private readonly IMapper _mapper;
+
+    public MovieService(IMovieRepository repository, IMapper mapper)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<IEnumerable<MovieCardDTO>> GetMovies()
+    public async Task<MovieDTO?> GetMovie(int id)
+    {
+        var movieEntity = await _repository.GetMovie(id);
+        if (movieEntity == null) {
+            return null;
+        }
+        return _mapper.MapMovieEntityToMovieDTO(movieEntity);
+    }
+
+    public async Task<IEnumerable<MovieDTO>> GetMovies()
     {
         var movieEntities = await _repository.GetMovies();
-        return movieEntities.Select(item => new MovieCardDTO(
-           item.Id,
-           item.Title,
-           item.Rating,
-           item.TimeStamp,
-           item.Description
-       ));
+        return _mapper.MapMovieEntitiesToMovieDTOs(movieEntities);
     }
 }

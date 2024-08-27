@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using MovieCardAPI.DB.Contexts;
 using MovieCardAPI.Extensions;
+using MovieCardAPI.Model.Utility;
 
 namespace MovieCardAPI;
 
@@ -29,9 +30,7 @@ public class Program
         AddGlobalErrorHandling(builder);
         AddAppServices(builder);
         builder.Services.AddControllers();
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        AddSwaggerService(builder);
         return builder.Build();
     }
 
@@ -39,7 +38,7 @@ public class Program
 
         var connectionString = builder.Configuration.GetConnectionString(
             "DefaultConnection"
-        ) ?? throw new InvalidOperationException("Connection string 'MovieDB1' not found.");
+        ) ?? throw new InvalidOperationException("Default connection string not found.");
 
         builder.Services.AddDbContext<MovieContext>(options =>
         {
@@ -89,11 +88,19 @@ public class Program
     {
         builder.Services.AddScoped<IMovieService, MovieService>();
         builder.Services.AddScoped<IMovieRepository, MovieRepository>();
+        builder.Services.AddTransient<IMapper, Mapper>();
 
         if (builder.Environment.IsDevelopment())
         {
             builder.Configuration.AddUserSecrets<Program>();
         }
+    }
+
+    private static void AddSwaggerService(WebApplicationBuilder builder)
+    {
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
     }
 
     private static void TestDBConnection(WebApplication app)
