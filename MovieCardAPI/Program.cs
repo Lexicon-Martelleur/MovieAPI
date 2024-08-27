@@ -12,6 +12,8 @@ namespace MovieCardAPI;
 /**
  * TODO Configure WebApp and HTTP Pipeline
  * 1. Log sensitive data in development.
+ * 2. Move Program Functions for building
+ * and configuring application to extension methods.
  */
 public class Program
 {

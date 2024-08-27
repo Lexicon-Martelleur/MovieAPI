@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using MovieCardAPI.Constants;
+using MovieCardAPI.Error;
 using MovieCardAPI.Model.DTO;
 using MovieCardAPI.Model.Service;
+using System.Net;
 
 namespace MovieCardAPI.Controllers;
 
@@ -28,8 +30,37 @@ public class MovieController(
         var movieDTO = await _service.GetMovie(id);
         if (movieDTO == null)
         {
-            return NotFound(movieDTO);
+            return NotFound();
         }
         return Ok(movieDTO);
+    }
+
+    [HttpPost(Name = "CreateMovie")]
+    public async Task<ActionResult<MovieDTO>> CreateMovie(
+        [FromBody] MovieForCreationDTO movie)
+    {
+        var createdMovie = await _service.CreateMovie(movie);
+        if (createdMovie == null)
+        {
+            return BadRequest(new ApiError(
+                HttpStatusCode.BadRequest,
+                "Failed to create the movie. Please check the provided data and try again."
+            ));
+        }
+        return CreatedAtRoute("CreateMovie", createdMovie);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<MovieDTO>> UpdateMovie(
+        int id,
+        [FromBody] MovieForUpdateDTO movie)
+    {
+        throw new NotImplementedException("_");
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<MovieDTO>> DeleteMovie(int id)
+    {
+        throw new NotImplementedException("_");
     }
 }

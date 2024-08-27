@@ -1,5 +1,4 @@
-﻿using MovieCardAPI.Entities;
-using MovieCardAPI.Model.DTO;
+﻿using MovieCardAPI.Model.DTO;
 using MovieCardAPI.Model.Repository;
 using MovieCardAPI.Model.Utility;
 
@@ -30,5 +29,19 @@ public class MovieService : IMovieService
     {
         var movieEntities = await _repository.GetMovies();
         return _mapper.MapMovieEntitiesToMovieDTOs(movieEntities);
+    }
+
+    public async Task<MovieDTO?> CreateMovie(MovieForCreationDTO movie)
+    {
+        var movieEntity = _mapper.MapMovieForCreationDTOToMovieEntity(movie);
+        if (!(await _repository.IsExistingDirector(movie.DirectorId)) ||
+            !(await _repository.IsExistingActors(movie.ActorIds)) ||
+            !(await _repository.IsExistingGenres(movie.Genres)))
+        {
+            return null;
+        }
+        await _repository.CreateMovie(movieEntity, movie.ActorIds, movie.Genres);
+        await _repository.SaveChangesAsync();
+        return _mapper.MapMovieEntityToMovieDTO(movieEntity);
     }
 }

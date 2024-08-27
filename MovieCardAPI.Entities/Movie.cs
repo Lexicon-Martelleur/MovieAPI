@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace MovieCardAPI.Entities;
+
+using MovieCardAPI.Constants;
 using System.ComponentModel.DataAnnotations.Schema;
 
 public class Movie
@@ -10,18 +12,18 @@ public class Movie
     public int Id { get; set; }
 
     [Required]
-    [MaxLength(1000)]
+    [MaxLength(MovieConstants.MAX_TITLE)]
     public string Title { get; set; }
 
     [Required]
-    [Range(1, 5)]
+    [Range(MovieConstants.MIN_RATING, MovieConstants.MAX_RATING)]
     public int Rating { get; set; }
 
     [Required]
     public long TimeStamp { get; set; }
 
     [Required]
-    [MaxLength(10000)]
+    [MaxLength(MovieConstants.MAX_DESCRIPTION)]
     public string Description { get; set; }
 
     [ForeignKey(nameof(Director))]

@@ -8,4 +8,6 @@ public interface IMovieService
     Task<IEnumerable<MovieDTO>> GetMovies();
 
     public Task<MovieDTO?> GetMovie(int id);
+
+    public Task<MovieDTO?> CreateMovie(MovieForCreationDTO movie);
 }

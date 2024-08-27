@@ -1,10 +1,24 @@
-﻿using MovieCardAPI.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using MovieCardAPI.Entities;
 
 namespace MovieCardAPI.Model.Repository;
 
 public interface IMovieRepository
 {
-    public Task<IEnumerable<Movie>> GetMovies();
+    Task<IEnumerable<Movie>> GetMovies();
 
-    public Task<Movie?> GetMovie(int id);
+    Task<Movie?> GetMovie(int id);
+
+    Task<bool> IsExistingDirector(int id);
+
+    Task<bool> IsExistingActors(IEnumerable<int> ids);
+
+    Task<bool> IsExistingGenres(IEnumerable<int> ids);
+
+    Task CreateMovie(
+        Movie movie,
+        IEnumerable<int> actorIds,
+        IEnumerable<int> genres);
+
+    Task<bool> SaveChangesAsync();
 }
