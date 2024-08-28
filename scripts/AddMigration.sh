@@ -14,12 +14,11 @@ check_input () {
   		echo "No argument for migration name provided"
 		echo "Usage $0 <MIGRATION_NAME>"
   		exit 1
-	else
-		echo "Building bigration: $1..."
 	fi
 }
 
 add_migration () {
+	echo "Building migration '$1'..."
 	dotnet.exe ef migrations add $1 \
 		--project MovieCardAPI.DB/ \
 		--startup-project MovieCardAPI/ \
