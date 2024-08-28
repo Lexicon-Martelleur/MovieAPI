@@ -18,10 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="NewFolder\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\MovieCardAPI.DB\MovieCardAPI.DB.csproj" />
     <ProjectReference Include="..\MovieCardAPI.Model\MovieCardAPI.Model.csproj" />
   </ItemGroup>

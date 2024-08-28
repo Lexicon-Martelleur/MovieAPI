@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using MovieCardAPI.Entities;
+﻿using MovieCardAPI.Entities;
 
 namespace MovieCardAPI.Model.Repository;
 
@@ -31,4 +30,12 @@ public interface IMovieRepository
         int movieId);
     
     Task DeleteMovie(int id);
+
+    Task<IEnumerable<Actor>> GetMovieRoles(int movieId);
+
+    Task<IEnumerable<Genre>> GetMovieGenres(int movieId);
+    
+    Task<Director?> GetDirector(int movieId);
+
+    Task<ContactInformation?> GetContactInformation(int directorId);
 }

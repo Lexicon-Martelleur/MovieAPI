@@ -39,7 +39,7 @@ namespace MovieCardAPI.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Actors");
+                    b.ToTable("Actors", (string)null);
                 });
 
             modelBuilder.Entity("MovieCardAPI.Entities.ContactInformation", b =>
@@ -68,7 +68,7 @@ namespace MovieCardAPI.DB.Migrations
                     b.HasIndex("DirectorId")
                         .IsUnique();
 
-                    b.ToTable("ContactInformations");
+                    b.ToTable("ContactInformations", (string)null);
                 });
 
             modelBuilder.Entity("MovieCardAPI.Entities.Director", b =>
@@ -89,7 +89,7 @@ namespace MovieCardAPI.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Directors");
+                    b.ToTable("Directors", (string)null);
                 });
 
             modelBuilder.Entity("MovieCardAPI.Entities.Genre", b =>
@@ -105,7 +105,7 @@ namespace MovieCardAPI.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Genres");
+                    b.ToTable("Genres", (string)null);
                 });
 
             modelBuilder.Entity("MovieCardAPI.Entities.Movie", b =>
@@ -139,7 +139,7 @@ namespace MovieCardAPI.DB.Migrations
 
                     b.HasIndex("DirectorId");
 
-                    b.ToTable("Movies");
+                    b.ToTable("Movies", (string)null);
                 });
 
             modelBuilder.Entity("MovieCardAPI.Entities.MovieGenre", b =>
@@ -154,7 +154,7 @@ namespace MovieCardAPI.DB.Migrations
 
                     b.HasIndex("GenreId");
 
-                    b.ToTable("MovieGenres");
+                    b.ToTable("MovieGenres", (string)null);
                 });
 
             modelBuilder.Entity("MovieCardAPI.Entities.MovieRole", b =>
@@ -169,7 +169,7 @@ namespace MovieCardAPI.DB.Migrations
 
                     b.HasIndex("ActorId");
 
-                    b.ToTable("MovieRoles");
+                    b.ToTable("MovieRoles", (string)null);
                 });
 
             modelBuilder.Entity("MovieCardAPI.Entities.ContactInformation", b =>

@@ -1,11 +1,11 @@
 ﻿using MovieCardAPI.Constants;
 using System.ComponentModel.DataAnnotations;
 
-namespace MovieCardAPI.Model.DTO;
+namespace MovieCardAPI.Model.ValueObjects;
 
-public abstract record class BaseMovieDTO(
+public abstract record class BaseMovieVO(
     [MaxLength(MovieConstants.MAX_TITLE)] string Title,
     [Range(MovieConstants.MIN_RATING, MovieConstants.MAX_RATING)] int Rating,
     long TimeStamp,
-    [MaxLength(MovieConstants.MAX_TITLE)]  string Description
+    [MaxLength(MovieConstants.MAX_TITLE)] string Description
 );

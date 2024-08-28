@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using MovieCardAPI.Constants;
-using MovieCardAPI.Entities;
 using MovieCardAPI.Error;
 using MovieCardAPI.Model.DTO;
 using MovieCardAPI.Model.Service;
@@ -18,7 +17,7 @@ public class MovieController(
 
     private readonly IMovieService _service = service ?? throw new ArgumentNullException(nameof(service));
 
-    [HttpGet(Name = "GetMovies")]
+    [HttpGet]
     public async Task<ActionResult<IEnumerable<MovieDTO>>> GetMovies()
     {
         var movieDTOs = await _service.GetMovies();
@@ -38,6 +37,19 @@ public class MovieController(
         return Ok(movieDTO);
     }
 
+    [HttpGet("{id}/details")]
+    public async Task<ActionResult<MovieDetailsDTO>> GetMovieDetails(
+        [FromRoute] int id
+    )
+    {
+        var movieDetailsDTO = await _service.GetMovieDetails(id);
+        if (movieDetailsDTO == null)
+        {
+            return NotFound();
+        }
+        return Ok(movieDetailsDTO);
+    }
+
     [HttpPost(Name = "CreateMovie")]
     public async Task<ActionResult<MovieDTO>> CreateMovie(
         [FromBody] MovieForCreationDTO movie)
@@ -50,7 +62,7 @@ public class MovieController(
                 "Failed to create the movie. Please check the provided data and try again."
             ));
         }
-        return CreatedAtRoute("CreateMovie", createdMovie);
+        return CreatedAtRoute(nameof(CreateMovie), createdMovie);
     }
 
     [HttpPut("{id}")]
@@ -70,12 +82,16 @@ public class MovieController(
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult<MovieDTO>> DeleteMovie(int id)
+    public async Task<IActionResult> DeleteMovie(
+        [FromRoute] int id)
     {
         var isDeleted = await _service.DeleteMovie(id);
         if (!isDeleted)
         {
-            return NotFound();
+            return NotFound(new ApiError(
+               HttpStatusCode.NotFound,
+               "Failed to delete the movie. Please check the provided data and try again."
+           ));
         }
         return Ok();
     }

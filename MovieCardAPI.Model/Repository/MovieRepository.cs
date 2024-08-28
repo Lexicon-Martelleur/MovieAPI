@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MovieCardAPI.Entities;
 using MovieCardAPI.DB.Contexts;
+using MovieCardAPI.Entities;
 
 namespace MovieCardAPI.Model.Repository;
 
@@ -159,5 +159,47 @@ public class MovieRepository : IMovieRepository
             return;
         }
         _context.Movies.Remove(movieEntity);
+    }
+
+    public async Task<IEnumerable<Actor>> GetMovieRoles(int movieId)
+    {
+        return await _context.MovieRoles
+            .Where(movieRole => movieRole.MovieId == movieId)
+            .Join(
+                _context.Actors,
+                movieRole => movieRole.ActorId,
+                actor => actor.Id,
+                (moviRole, actor) => actor
+            )
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Genre>> GetMovieGenres(int movieId)
+    {
+        return await _context.MovieGenres
+            .Where(moviGenre => moviGenre.MovieId == movieId)
+            .Join(
+                _context.Genres,
+                moviGenre => moviGenre.GenreId,
+                genre => genre.Id,
+                (moviGenre, genre) => genre
+            )
+            .ToListAsync();
+    }
+
+    public async Task<Director?> GetDirector(int movieId)
+    {
+        return await _context.Movies
+            .Where(movie => movie.Id == movieId)
+            .Select(movie => movie.Director)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<ContactInformation?> GetContactInformation(int directorId)
+    {
+        return await _context.Directors
+            .Where(director => director.Id == directorId)
+            .Select(director => director.ContactInformation)
+            .FirstOrDefaultAsync();
     }
 }

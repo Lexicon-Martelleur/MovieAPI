@@ -12,4 +12,11 @@ public interface IMapper
 
     Movie MapMovieForCreationDTOToMovieEntity(
         MovieForCreationDTO movie);
+
+    MovieDetailsDTO MapMovieEntitiesToMovieDetailsDTO(
+        Movie movie,
+        IEnumerable<Actor> actors,
+        IEnumerable<Genre> genres,
+        ContactInformation contactInformation,
+        Director director);
 }

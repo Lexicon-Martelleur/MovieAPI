@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using MovieCardAPI.Constants;
 
 namespace MovieCardAPI.Entities;
 
@@ -10,7 +11,8 @@ public class Director
     public int Id { get; set; }
 
     [Required]
-    [MaxLength(1000)]
+    [MaxLength(PersonConstants.MAX_NAME)]
+    [MinLength(PersonConstants.MIN_NAME)]
     public string Name { get; set; }
 
     [Required]

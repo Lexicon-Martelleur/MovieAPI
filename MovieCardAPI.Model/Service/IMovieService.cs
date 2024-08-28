@@ -1,5 +1,4 @@
-﻿using MovieCardAPI.Entities;
-using MovieCardAPI.Model.DTO;
+﻿using MovieCardAPI.Model.DTO;
 
 namespace MovieCardAPI.Model.Service;
 
@@ -7,9 +6,10 @@ public interface IMovieService
 {
     Task<IEnumerable<MovieDTO>> GetMovies();
 
-    public Task<MovieDTO?> GetMovie(int id);
+    Task<MovieDTO?> GetMovie(int id);
 
-    public Task<MovieDTO?> CreateMovie(MovieForCreationDTO movie);
+    Task<MovieDTO?> CreateMovie(MovieForCreationDTO movie);
     Task<MovieDTO?> UpdateMovie(int id, MovieForUpdateDTO movie);
     Task<bool> DeleteMovie(int id);
+    Task<MovieDetailsDTO?> GetMovieDetails(int id);
 }

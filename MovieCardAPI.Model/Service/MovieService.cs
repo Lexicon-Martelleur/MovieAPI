@@ -31,6 +31,29 @@ public class MovieService : IMovieService
         return _mapper.MapMovieEntitiesToMovieDTOs(movieEntities);
     }
 
+    public async Task<MovieDetailsDTO?> GetMovieDetails(int id)
+    {
+        var director = await _repository.GetDirector(id);
+        if (director == null) { return null; }
+
+
+        var contactInformation = await _repository.GetContactInformation(director.Id);
+        if (contactInformation == null) { return null; }
+
+        var actors = await _repository.GetMovieRoles(id);
+        var genres = await _repository.GetMovieGenres(id);
+        var movie = await _repository.GetMovie(id);
+
+        if (movie == null) { return null; }
+        
+        return _mapper.MapMovieEntitiesToMovieDetailsDTO(
+            movie,
+            actors,
+            genres,
+            contactInformation,
+            director);
+    }
+
     public async Task<MovieDTO?> CreateMovie(MovieForCreationDTO movie)
     {
         var movieEntity = _mapper.MapMovieForCreationDTOToMovieEntity(movie);

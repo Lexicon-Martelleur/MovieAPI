@@ -1,4 +1,6 @@
-﻿namespace MovieCardAPI.Model.DTO;
+﻿using MovieCardAPI.Model.ValueObjects;
+
+namespace MovieCardAPI.Model.DTO;
 
 public record class MovieForCreationDTO(
     string Title,
@@ -8,4 +10,4 @@ public record class MovieForCreationDTO(
     int DirectorId,
     int[] ActorIds,
     int[] GenreIds
-) : BaseMovieDTO(Title, Rating, TimeStamp, Description);
+) : BaseMovieVO(Title, Rating, TimeStamp, Description);
