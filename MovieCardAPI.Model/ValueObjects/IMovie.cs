@@ -1,6 +1,4 @@
-﻿using MovieCardAPI.Model.Validation;
-
-namespace MovieCardAPI.Model.ValueObjects;
+﻿namespace MovieCardAPI.Model.ValueObjects;
 
 public interface IMovie {
     string Title { get; set; }

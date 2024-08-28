@@ -1,7 +1,6 @@
 ﻿using MovieCardAPI.Entities;
 using MovieCardAPI.Model.DTO;
 using MovieCardAPI.Model.Validation;
-using System.ComponentModel.DataAnnotations;
 
 namespace MovieCardAPI.Model.Utility;
 
@@ -14,7 +13,7 @@ public class Mapper : IMapper
 
     public MovieDTO MapMovieEntityToMovieDTO(Movie movie)
     {
-        return new MovieDTO()
+        return new MovieDTO
         {
             Id = movie.Id,
             Title = movie.Title,
@@ -27,7 +26,7 @@ public class Mapper : IMapper
     public Movie MapMovieForCreationDTOToMovieEntity(
         MovieForCreationDTO movie)
     {
-        return new Movie()
+        return new Movie
         {
             Title = movie.Title,
             Rating = movie.Rating,
@@ -44,7 +43,7 @@ public class Mapper : IMapper
         ContactInformation contactInformation,
         Director director)
     {
-        return new MovieDetailsDTO() {
+        return new MovieDetailsDTO {
             Id = movie.Id,
             Title = movie.Title,
             Rating = movie.Rating,
@@ -58,7 +57,7 @@ public class Mapper : IMapper
 
     private ActorDTO MapActorEntityToActorDTO(Actor actor)
     {
-        return ValidationService.ValidateInstance(new ActorDTO()
+        return ValidationService.ValidateInstance(new ActorDTO
         {
             Id = actor.Id,
             Name = actor.Name,
@@ -78,7 +77,7 @@ public class Mapper : IMapper
         Director director,
         ContactInformation contactInformation)
     {
-        return ValidationService.ValidateInstance(new DirectorDTO()
+        return ValidationService.ValidateInstance(new DirectorDTO
         {
             Id = director.Id,
             Name = director.Name,
@@ -90,7 +89,7 @@ public class Mapper : IMapper
     private ContactInformationDTO MapContactInforamtionEntityToGenreDTO(
         ContactInformation contactInformation)
     {
-        return ValidationService.ValidateInstance(new ContactInformationDTO()
+        return ValidationService.ValidateInstance(new ContactInformationDTO
         {
             Email = contactInformation.Email,
             PhoneNumber = contactInformation.PhoneNumber

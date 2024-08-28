@@ -1,6 +1,5 @@
 ﻿using Bogus;
 using Microsoft.EntityFrameworkCore;
-
 using MovieCardAPI.Constants;
 using MovieCardAPI.DB.Contexts;
 using MovieCardAPI.Entities;

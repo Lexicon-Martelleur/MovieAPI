@@ -12,8 +12,6 @@ public static class WebApplicationExtension
         using var scope = applicationBuilder.ApplicationServices.CreateScope();
         var serviceProvider = scope.ServiceProvider;
         var context = serviceProvider.GetRequiredService<MovieContext>();
-
-        await context.Database.EnsureDeletedAsync();
         await context.Database.MigrateAsync();
         await SeedMovieDB.RunAsync(context);
     }
