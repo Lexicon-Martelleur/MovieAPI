@@ -7,15 +7,19 @@ using System.Net;
 
 namespace MovieCardAPI.Controllers;
 
-[Route(Router.MOVIE)]
 [ApiController]
-public class MovieController(
-    ILogger<MovieController> logger,
-    IMovieService service) : ControllerBase
+[Route(Router.MOVIE)]
+public class MovieController : ControllerBase
 {
-    private readonly ILogger<MovieController> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    
+    private readonly ILogger<MovieController> _logger;
+    private readonly IMovieService _service;
 
-    private readonly IMovieService _service = service ?? throw new ArgumentNullException(nameof(service));
+    public MovieController(ILogger<MovieController> logger, IMovieService service)
+    {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _service = service ?? throw new ArgumentNullException(nameof(service));
+    }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MovieDTO>>> GetMovies()

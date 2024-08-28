@@ -1,3 +1,12 @@
-﻿namespace MovieCardAPI.Model.DTO;
+﻿using System.ComponentModel.DataAnnotations;
 
-public record ContactInformationDTO(string Email, string PhoneNumber);
+namespace MovieCardAPI.Model.DTO;
+
+public record ContactInformationDTO {
+
+    [Length(1, 1000)]
+    public required string Email { get; set; }
+
+    [Length(1, 1000)]
+    public required string PhoneNumber { get; set; }
+}

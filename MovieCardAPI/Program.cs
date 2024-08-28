@@ -18,11 +18,11 @@ public class Program
     private static WebApplication CreateWebApplication(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        builder.Services.AddControllers();
         builder.AddDBServiceExtension();
         builder.AddCustomLoggingExtension();
         builder.AddGlobalErrorHandlingExtension();
         builder.AddApplicationServicesExtension();
-        builder.Services.AddControllers();
         builder.AddSwaggerServiceExtension();
         builder.AddCORSPolicyExtension();
         return builder.Build();

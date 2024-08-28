@@ -1,11 +1,10 @@
-﻿using MovieCardAPI.Constants;
-using System.ComponentModel.DataAnnotations;
+﻿using MovieCardAPI.Model.Validation;
 
 namespace MovieCardAPI.Model.ValueObjects;
 
-public abstract record class BaseMovieVO(
-    [MaxLength(MovieConstants.MAX_TITLE)] string Title,
-    [Range(MovieConstants.MIN_RATING, MovieConstants.MAX_RATING)] int Rating,
-    long TimeStamp,
-    [MaxLength(MovieConstants.MAX_TITLE)] string Description
-);
+public interface IMovie {
+    string Title { get; set; }
+    int Rating { get; set; }
+    long TimeStamp { get; set; }
+    string Description { get; set; }
+};

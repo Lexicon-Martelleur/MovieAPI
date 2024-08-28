@@ -2,6 +2,7 @@
 
 public static class MovieConstants
 {
+    public const int MIN_TEXT = 1;
     public const int MAX_TITLE = 1000;
     public const int MIN_RATING = 0;
     public const int MAX_RATING = 5;
