@@ -9,7 +9,10 @@ public interface IMovieService
     Task<MovieDTO?> GetMovie(int id);
 
     Task<MovieDTO?> CreateMovie(MovieForCreationDTO movie);
+    
     Task<MovieDTO?> UpdateMovie(int id, MovieForUpdateDTO movie);
+    
     Task<bool> DeleteMovie(int id);
+    
     Task<MovieDetailsDTO?> GetMovieDetails(int id);
 }
