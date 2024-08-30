@@ -40,4 +40,20 @@ public class MovieContext : DbContext
         builder.ApplyConfiguration(new MovieRoleConfigurations());
         builder.ApplyConfiguration(new MovieGenreConfigurations());     
     }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        ChangeTracker.DetectChanges();
+        var modifiedMovies = ChangeTracker.Entries<Movie>().Where(movie => 
+            movie.State == EntityState.Modified);
+
+        foreach (var movie in modifiedMovies)
+        {
+            var unixTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            movie.Property(MovieConfigurations.UpdateProperty)
+                .CurrentValue = unixTime;
+        }
+
+        return base.SaveChangesAsync(cancellationToken);
+    }
 }

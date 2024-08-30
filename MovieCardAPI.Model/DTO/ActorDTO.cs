@@ -9,6 +9,7 @@ public class ActorDTO : IPerson
 
     [ValidateName]
     public required string Name { get; set; } = string.Empty;
-    
+
+    [UNIXTimestampValidation]
     public required long DateOfBirth { get; set; }
 }

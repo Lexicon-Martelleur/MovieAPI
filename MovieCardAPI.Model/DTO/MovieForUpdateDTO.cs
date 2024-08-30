@@ -10,6 +10,7 @@ public record class MovieForUpdateDTO : IMovie {
     [ValidateMovieRating]
     public required int Rating { get; set; }
 
+    [UNIXTimestampValidation]
     public required long TimeStamp { get; set; }
 
     [ValidateMovieDescription]

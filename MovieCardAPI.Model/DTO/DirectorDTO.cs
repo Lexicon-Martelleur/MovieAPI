@@ -11,6 +11,7 @@ public class DirectorDTO : IPerson
     [ValidateName]
     public required string Name { get; set; }
 
+    [UNIXTimestampValidation]
     public required long DateOfBirth { get; set; }
 
     public required ContactInformationDTO ContactInformation { get; set; }

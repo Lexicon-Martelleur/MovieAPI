@@ -9,10 +9,11 @@ public class MovieForCreationDTO : IMovie {
 
     [ValidateMovieRating]
     public required int Rating { get; set; }
-    
+
+    [UNIXTimestampValidation]
     public required long TimeStamp { get; set; }
+
     [ValidateMovieDescription]
-    
     public required string Description { get; set; }
     
     public required int DirectorId { get; set; }

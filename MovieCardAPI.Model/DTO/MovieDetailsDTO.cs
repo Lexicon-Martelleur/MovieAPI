@@ -1,5 +1,4 @@
 ﻿using MovieCardAPI.Model.Validation;
-using MovieCardAPI.Model.ValueObjects;
 
 namespace MovieCardAPI.Model.DTO;
 
@@ -11,7 +10,8 @@ public record class MovieDetailsDTO {
     
     [ValidateMovieRating]
     public required int Rating { get; set; }
-    
+
+    [UNIXTimestampValidation]
     public required long TimeStamp { get; set; }
     
     [ValidateMovieDescription]
