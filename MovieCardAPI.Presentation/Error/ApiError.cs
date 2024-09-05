@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace MovieCardAPI.Error;
+namespace MovieCardAPI.Presentation.Error;
 
 public record class ApiError(
     HttpStatusCode Status,

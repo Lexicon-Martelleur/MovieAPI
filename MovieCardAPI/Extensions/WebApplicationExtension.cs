@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MovieCardAPI.DB.Contexts;
-using MovieCardAPI.DB.Seeds;
+using MovieCardAPI.Infrastructure.Contexts;
+using MovieCardAPI.Infrastructure.Seeds;
 using MovieCardAPI.Constants;
 
 namespace MovieCardAPI.Extensions;

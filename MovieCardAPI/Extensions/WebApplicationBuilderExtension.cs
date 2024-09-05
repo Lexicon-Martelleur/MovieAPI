@@ -2,14 +2,24 @@
 using MovieCardAPI.Model.Repository;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using MovieCardAPI.DB.Contexts;
+using MovieCardAPI.Infrastructure.Contexts;
 using MovieCardAPI.Model.Utility;
 using MovieCardAPI.Constants;
+using System.Reflection.Metadata;
+using MovieCardAPI.Infrastructure.Repositories;
 
 namespace MovieCardAPI.Extensions;
 
 public static class WebApplicationBuilderExtension
 {
+    public static void AddControllersExtension(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddControllers(configure =>
+        {
+            configure.ReturnHttpNotAcceptable = true;
+        }).AddApplicationPart(typeof(AssemblyReference).Assembly);
+    }
+
     public static void AddDBServiceExtension(this WebApplicationBuilder builder)
     {
 
@@ -65,7 +75,9 @@ public static class WebApplicationBuilderExtension
     public static void AddApplicationServicesExtension(this WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<IMovieService, MovieService>();
-        builder.Services.AddScoped<IMovieRepository, MovieRepository>();
+
+        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
         builder.Services.AddTransient<IMapper, Mapper>();
 
         if (builder.Environment.IsDevelopment())

@@ -10,7 +10,7 @@ main () {
 update_database () {
 	echo "Update database to latest migration..."
 	dotnet.exe ef database update \
-		--project MovieCardAPI.DB/ \
+		--project MovieCardAPI.Infrastructure/ \
 		--startup-project MovieCardAPI/ \
 	    --configuration Development \
 		--context MovieContext

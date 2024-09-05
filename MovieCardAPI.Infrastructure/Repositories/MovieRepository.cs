@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MovieCardAPI.DB.Contexts;
+using MovieCardAPI.Infrastructure.Contexts;
 using MovieCardAPI.Entities;
+using MovieCardAPI.Model.Repository;
 
-namespace MovieCardAPI.Model.Repository;
+namespace MovieCardAPI.Infrastructure.Repositories;
 
 public class MovieRepository : IMovieRepository
 {

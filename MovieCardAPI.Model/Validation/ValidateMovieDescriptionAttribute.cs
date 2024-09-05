@@ -1,5 +1,4 @@
-﻿
-using MovieCardAPI.Constants;
+﻿using MovieCardAPI.Constants;
 using MovieCardAPI.Model.ValueObjects;
 using System.ComponentModel.DataAnnotations;
 

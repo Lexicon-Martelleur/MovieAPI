@@ -12,7 +12,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieCardAPI.Model", "Movie
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieCardAPI.Entities", "MovieCardAPI.Entities\MovieCardAPI.Entities.csproj", "{87FD3CEC-8D0D-435A-A3A8-B21374E9254F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieCardAPI.DB", "MovieCardAPI.DB\MovieCardAPI.DB.csproj", "{F9154545-EC9C-4139-A8AB-0CDDF1C6FEC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieCardAPI.Infrastructure", "MovieCardAPI.Infrastructure\MovieCardAPI.Infrastructure.csproj", "{F9154545-EC9C-4139-A8AB-0CDDF1C6FEC7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieCardAPI.Constants", "MovieCardAPI.Constants\MovieCardAPI.Constants.csproj", "{AA39D632-6F47-404F-9EFE-0009F0CD3F91}"
 EndProject

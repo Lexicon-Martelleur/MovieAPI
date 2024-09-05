@@ -1,17 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
-using MovieCardAPI.Constants;
-using MovieCardAPI.Error;
+using Microsoft.Extensions.Logging;
 using MovieCardAPI.Model.DTO;
 using MovieCardAPI.Model.Service;
+using MovieCardAPI.Presentation.Constants;
+using MovieCardAPI.Presentation.Error;
 using System.Net;
 
-namespace MovieCardAPI.Controllers;
+namespace MovieCardAPI.Presentation.Controllers;
 
 [ApiController]
 [Route(Router.MOVIE)]
 public class MovieController : ControllerBase
 {
-    
+
     private readonly ILogger<MovieController> _logger;
     private readonly IMovieService _service;
 

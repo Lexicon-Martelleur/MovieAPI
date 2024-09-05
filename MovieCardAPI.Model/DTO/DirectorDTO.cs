@@ -1,6 +1,5 @@
 ﻿using MovieCardAPI.Model.Validation;
 using MovieCardAPI.Model.ValueObjects;
-using System.ComponentModel.DataAnnotations;
 
 namespace MovieCardAPI.Model.DTO;
 

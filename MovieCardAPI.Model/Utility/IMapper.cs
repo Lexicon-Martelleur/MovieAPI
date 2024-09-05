@@ -1,6 +1,5 @@
 ﻿using MovieCardAPI.Entities;
 using MovieCardAPI.Model.DTO;
-using MovieCardAPI.Model.ValueObjects;
 
 namespace MovieCardAPI.Model.Utility;
 

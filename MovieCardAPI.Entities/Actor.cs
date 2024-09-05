@@ -18,7 +18,7 @@ public class Actor
     [Required]
     public long DateOfBirth { get; set; }
 
-    // Navigation Prop
+    // Navigation Props
     public ICollection<Movie> Movies { get; set; }
 
     public ICollection<MovieRole> MovieRoles { get; set; }

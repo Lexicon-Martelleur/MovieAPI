@@ -14,6 +14,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MovieCardAPI.Entities\MovieCardAPI.Entities.csproj" />
+    <ProjectReference Include="..\MovieCardAPI.Model\MovieCardAPI.Model.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

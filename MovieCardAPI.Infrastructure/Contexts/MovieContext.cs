@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MovieCardAPI.DB.Configurations;
+using MovieCardAPI.Infrastructure.Configurations;
 using MovieCardAPI.Entities;
 
-namespace MovieCardAPI.DB.Contexts;
+namespace MovieCardAPI.Infrastructure.Contexts;
 
 public class MovieContext : DbContext
 {

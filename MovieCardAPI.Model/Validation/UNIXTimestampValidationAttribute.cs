@@ -7,7 +7,7 @@ public class UNIXTimestampValidationAttribute : ValidationAttribute
     public override bool IsValid(
         object? value)
     {
-        if (value is not string input)
+        if (value is not long input)
         {
             return false;
         }
@@ -15,15 +15,11 @@ public class UNIXTimestampValidationAttribute : ValidationAttribute
         return IsUnixTimeStamp(input);
     }
 
-    private bool IsUnixTimeStamp(string input)
+    private bool IsUnixTimeStamp(long input)
     {
-        if (!long.TryParse(input, out long timestamp))
-        {
-            return false;
-        }
         long minUnixTimestamp = 0;
         long maxUnixTimestamp = DateTimeOffset.MaxValue.ToUnixTimeSeconds();
-        return timestamp >= minUnixTimestamp &&
-            timestamp <= maxUnixTimestamp;
+        
+        return input >= minUnixTimestamp && input <= maxUnixTimestamp;
     }
 }

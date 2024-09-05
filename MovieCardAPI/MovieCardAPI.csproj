@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>a0d5a9f7-b572-4f84-8c87-7d00c3fba7dc</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,8 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MovieCardAPI.DB\MovieCardAPI.DB.csproj" />
+    <ProjectReference Include="..\MovieCardAPI.Infrastructure\MovieCardAPI.Infrastructure.csproj" />
     <ProjectReference Include="..\MovieCardAPI.Model\MovieCardAPI.Model.csproj" />
+    <ProjectReference Include="..\MovieCardAPI.Presentation\MovieCardAPI.Presentation.csproj" />
   </ItemGroup>
 
 </Project>

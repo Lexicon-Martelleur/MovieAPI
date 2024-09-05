@@ -20,7 +20,7 @@ check_input () {
 add_migration () {
 	echo "Building migration '$1'..."
 	dotnet.exe ef migrations add $1 \
-		--project MovieCardAPI.DB/ \
+		--project MovieCardAPI.Infrastructure/ \
 		--startup-project MovieCardAPI/ \
 	    --configuration Development \
 		--context MovieContext

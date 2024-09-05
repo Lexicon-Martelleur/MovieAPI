@@ -3,8 +3,7 @@ using MovieCardAPI.Extensions;
 namespace MovieCardAPI;
 
 /**
- * TODO Configure WebApp and HTTP Pipeline
- * 1. Log sensitive data in development.
+ * TODO Refine/Check how sensitive data is logged in Dev vs Prod.
  */
 public class Program
 {
@@ -18,7 +17,7 @@ public class Program
     private static WebApplication CreateWebApplication(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        builder.Services.AddControllers();
+        builder.AddControllersExtension();
         builder.AddDBServiceExtension();
         builder.AddCustomLoggingExtension();
         builder.AddGlobalErrorHandlingExtension();

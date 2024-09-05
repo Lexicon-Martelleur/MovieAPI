@@ -1,10 +1,10 @@
 ﻿using Bogus;
 using Microsoft.EntityFrameworkCore;
 using MovieCardAPI.Constants;
-using MovieCardAPI.DB.Contexts;
+using MovieCardAPI.Infrastructure.Contexts;
 using MovieCardAPI.Entities;
 
-namespace MovieCardAPI.DB.Seeds;
+namespace MovieCardAPI.Infrastructure.Seeds;
 
 public static class SeedMovieDB
 {
@@ -14,7 +14,7 @@ public static class SeedMovieDB
             return;
         }
 
-        Console.WriteLine("Seeding Data");
+        Console.WriteLine("Seeding Data...");
 
         var genres = CreateGenres();
         await context.AddRangeAsync(genres);

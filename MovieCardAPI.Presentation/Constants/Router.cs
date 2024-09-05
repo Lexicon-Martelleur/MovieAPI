@@ -1,4 +1,4 @@
-﻿namespace MovieCardAPI.Constants;
+﻿namespace MovieCardAPI.Presentation.Constants;
 
 internal class Router
 {

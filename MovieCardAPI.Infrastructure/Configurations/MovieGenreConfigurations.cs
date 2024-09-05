@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MovieCardAPI.Entities;
 
-namespace MovieCardAPI.DB.Configurations;
+namespace MovieCardAPI.Infrastructure.Configurations;
 
 internal class MovieGenreConfigurations : IEntityTypeConfiguration<MovieGenre>
 {

@@ -10,7 +10,7 @@ main () {
 remove_latest_migration () {
 	echo "Removing latest migration..."
 	dotnet.exe ef migrations remove \
-		--project MovieCardAPI.DB/ \
+		--project MovieCardAPI.Infrastructure/ \
 		--startup-project MovieCardAPI/ \
 	    --configuration Development \
 		--context MovieContext
