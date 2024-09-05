@@ -6,6 +6,6 @@ public class MovieRole
     public int ActorId { get; set; }
 
     // Navigation Props
-    public Movie Movie { get; set; }
-    public Actor Actor { get; set; }
+    public Movie Movie { get; set; } = null!;
+    public Actor Actor { get; set; } = null!;
 }

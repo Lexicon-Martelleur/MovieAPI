@@ -11,15 +11,15 @@ public class ContactInformation
 
     [Required]
     [MaxLength(1000)]
-    public string Email { get; set; }
+    public string Email { get; set; } = string.Empty;
 
     [Required]
     [MaxLength(1000)]
-    public string PhoneNumber { get; set; }
+    public string PhoneNumber { get; set; } = string.Empty;
 
     [ForeignKey(nameof(Director))]
     public int DirectorId { get; set; }
 
     // Navigation Props
-    public Director Director { get; set; }
+    public Director Director { get; set; } = null!;
 }

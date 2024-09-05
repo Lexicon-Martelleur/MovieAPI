@@ -20,7 +20,7 @@ public class Program
         builder.AddControllersExtension();
         builder.AddDBServiceExtension();
         builder.AddCustomLoggingExtension();
-        builder.AddGlobalErrorHandlingExtension();
+        builder.AddGlobalExceptionHandlingExtension();
         builder.AddApplicationServicesExtension();
         builder.AddSwaggerServiceExtension();
         builder.AddCORSPolicyExtension();
@@ -39,7 +39,7 @@ public class Program
         else
         {
             app.UseHttpsRedirection();
-            app.UseExceptionHandler();
+            app.UseGlobalExceptionHandlerExtension();
         }
         app.UseAuthorization();
         app.MapControllers();

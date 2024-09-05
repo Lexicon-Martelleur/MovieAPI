@@ -49,26 +49,9 @@ public static class WebApplicationBuilderExtension
         builder.Services.AddSerilog();
     }
 
-    public static void AddGlobalErrorHandlingExtension(this WebApplicationBuilder builder)
+    public static void AddGlobalExceptionHandlingExtension(this WebApplicationBuilder builder)
     {
-        builder.Services.AddProblemDetails(options =>
-        {
-            options.CustomizeProblemDetails = context =>
-            {
-                if (context.Exception is NotImplementedException)
-                {
-                    context.ProblemDetails.Status = StatusCodes.Status503ServiceUnavailable;
-                    context.ProblemDetails.Title = "Resource not implemented";
-                    context.ProblemDetails.Detail = context.Exception.Message;
-                }
-                else if (context.Exception != null)
-                {
-                    context.ProblemDetails.Status = StatusCodes.Status500InternalServerError;
-                    context.ProblemDetails.Title = "An unexpected error occurred";
-                    context.ProblemDetails.Detail = "Please try again later.";
-                }
-            };
-        });
+        builder.Services.AddProblemDetails();
     }
 
     public static void AddApplicationServicesExtension(this WebApplicationBuilder builder)

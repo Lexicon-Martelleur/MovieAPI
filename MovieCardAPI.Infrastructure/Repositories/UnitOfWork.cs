@@ -1,7 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
-using MovieCardAPI.Infrastructure.Contexts;
+﻿using MovieCardAPI.Infrastructure.Contexts;
 using MovieCardAPI.Model.Repository;
-using System.Xml;
 
 namespace MovieCardAPI.Infrastructure.Repositories;
 

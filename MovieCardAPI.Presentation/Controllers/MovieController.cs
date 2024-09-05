@@ -35,10 +35,6 @@ public class MovieController : ControllerBase
     )
     {
         var movieDTO = await _service.GetMovie(id);
-        if (movieDTO == null)
-        {
-            return NotFound();
-        }
         return Ok(movieDTO);
     }
 
@@ -48,10 +44,6 @@ public class MovieController : ControllerBase
     )
     {
         var movieDetailsDTO = await _service.GetMovieDetails(id);
-        if (movieDetailsDTO == null)
-        {
-            return NotFound();
-        }
         return Ok(movieDetailsDTO);
     }
 
@@ -60,13 +52,6 @@ public class MovieController : ControllerBase
         [FromBody] MovieForCreationDTO movie)
     {
         var createdMovie = await _service.CreateMovie(movie);
-        if (createdMovie == null)
-        {
-            return BadRequest(new ApiError(
-                HttpStatusCode.BadRequest,
-                "Failed to create the movie. Please check the provided data and try again."
-            ));
-        }
         return CreatedAtRoute(nameof(CreateMovie), createdMovie);
     }
 
@@ -76,13 +61,6 @@ public class MovieController : ControllerBase
         [FromBody] MovieForUpdateDTO movie)
     {
         var updatedMovie = await _service.UpdateMovie(id, movie);
-        if (updatedMovie == null)
-        {
-            return BadRequest(new ApiError(
-                HttpStatusCode.BadRequest,
-                "Failed to updated the movie. Please check the provided data and try again."
-            ));
-        }
         return Ok(updatedMovie);
     }
 

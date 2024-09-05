@@ -1,4 +1,5 @@
 ﻿using MovieCardAPI.Model.DTO;
+using MovieCardAPI.Model.Exeptions;
 using MovieCardAPI.Model.Repository;
 using MovieCardAPI.Model.Utility;
 
@@ -16,13 +17,12 @@ public class MovieService : IMovieService
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<MovieDTO?> GetMovie(int id)
+    public async Task<MovieDTO> GetMovie(int id)
     {
-        var movieEntity = await _uow.MovieRepository.GetMovie(id);
-        if (movieEntity == null) {
-            return null;
-        }
-        return _mapper.MapMovieEntityToMovieDTO(movieEntity);
+        var movieEntity = await _uow.MovieRepository.GetMovie(id)
+            ?? throw new MovieNotFoundException(id);
+        var movie = _mapper.MapMovieEntityToMovieDTO(movieEntity);
+        return movie;
     }
 
     public async Task<IEnumerable<MovieDTO>> GetMovies()
@@ -31,20 +31,17 @@ public class MovieService : IMovieService
         return _mapper.MapMovieEntitiesToMovieDTOs(movieEntities);
     }
 
-    public async Task<MovieDetailsDTO?> GetMovieDetails(int id)
+    public async Task<MovieDetailsDTO> GetMovieDetails(int id)
     {
-        var director = await _uow.MovieRepository.GetDirector(id);
-        if (director == null) { return null; }
-
-
-        var contactInformation = await _uow.MovieRepository.GetContactInformation(director.Id);
-        if (contactInformation == null) { return null; }
-
+        var director = await _uow.MovieRepository.GetDirector(id)
+            ?? throw new DirectorNotFoundException(id);
+        var contactInformation = await _uow.MovieRepository.GetContactInformation(director.Id)
+            ?? throw new ContactInformationNotFoundException(id);
+        
         var actors = await _uow.MovieRepository.GetMovieRoles(id);
         var genres = await _uow.MovieRepository.GetMovieGenres(id);
-        var movie = await _uow.MovieRepository.GetMovie(id);
-
-        if (movie == null) { return null; }
+        var movie = await _uow.MovieRepository.GetMovie(id)
+            ?? throw new MovieNotFoundException(id);
         
         return _mapper.MapMovieEntitiesToMovieDetailsDTO(
             movie,
@@ -54,27 +51,31 @@ public class MovieService : IMovieService
             director);
     }
 
-    public async Task<MovieDTO?> CreateMovie(MovieForCreationDTO movie)
+    public async Task<MovieDTO> CreateMovie(MovieForCreationDTO movie)
     {
         var movieEntity = _mapper.MapMovieForCreationDTOToMovieEntity(movie);
         if (!(await _uow.MovieRepository.IsExistingDirector(movie.DirectorId)) ||
             !(await _uow.MovieRepository.IsExistingActors(movie.ActorIds)) ||
             !(await _uow.MovieRepository.IsExistingGenres(movie.GenreIds)))
         {
-            return null;
+            throw new ResourceNotFoundException("Multiple resources");
         }
 
         var isStored = await _uow.ExecuteAndSaveTransaction([
             _uow.AsAsync(() => {
                 _uow.MovieRepository.CreateMovie(movieEntity, movie.ActorIds, movie.GenreIds);
             }),
-            _uow.AsAsync(() => { 
+            _uow.AsAsync(() => {
                 _uow.MovieRepository.CreateMovieGenres(movieEntity, movie.ActorIds);
                 _uow.MovieRepository.CreateMovieRoles(movieEntity, movie.GenreIds);
             })
         ]);
-        if (!isStored) { return null; }
-               
+        if (!isStored)
+        {
+            throw new DomainUnableOperationException(
+                "Failed to create the movie. Please check the provided data and try again.");
+        }
+
         return _mapper.MapMovieEntityToMovieDTO(movieEntity);
     }
 
@@ -87,18 +88,18 @@ public class MovieService : IMovieService
         };
     }
 
-    public async Task<MovieDTO?> UpdateMovie(int id, MovieForUpdateDTO movie)
+    public async Task<MovieDTO> UpdateMovie(int id, MovieForUpdateDTO movie)
     {
         if (!(await _uow.MovieRepository.IsExistingDirector(movie.DirectorId)) ||
             !(await _uow.MovieRepository.IsExistingActors(movie.ActorIds)) ||
             !(await _uow.MovieRepository.IsExistingGenres(movie.GenreIds)))
         {
-            return null;
+            throw new ResourceNotFoundException("Multiple resources");
         }
 
-        var movieEntity = await _uow.MovieRepository.GetMovie(id);
-        if (movieEntity == null) { return null; }
-
+        var movieEntity = await _uow.MovieRepository.GetMovie(id)
+            ?? throw new MovieNotFoundException(id);
+        
         var isStored = await _uow.ExecuteAndSaveTransaction([
             async () => {
                 await _uow.MovieRepository.RemoveMovieRoles(movieEntity.Id);
@@ -118,19 +119,20 @@ public class MovieService : IMovieService
                 movieEntity.DirectorId = movie.DirectorId;
             })
         ]);
-        if (!isStored) { return null; }
+        if (!isStored) {
+            throw new DomainUnableOperationException(
+                "Failed to update the movie. Please check the provided data and try again.");
+        }
 
         return _mapper.MapMovieEntityToMovieDTO(movieEntity);
     }
 
     public async Task<bool> DeleteMovie(int id)
     {
-        var movieEntity = await _uow.MovieRepository.GetMovie(id);
-        if (movieEntity == null)
-        {
-            return false;
-        }
-        await _uow.MovieRepository.DeleteMovie(id);
+        var movieEntity = await _uow.MovieRepository.GetMovie(id)
+            ?? throw new MovieNotFoundException(id);
+        
+        await _uow.MovieRepository.DeleteMovie(movieEntity.Id);
         return await _uow.SaveChangesAsync();
     }
 }

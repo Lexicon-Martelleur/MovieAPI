@@ -13,13 +13,13 @@ public class Actor
     [Required]
     [MaxLength(PersonConstants.MAX_NAME)]
     [MinLength(PersonConstants.MIN_NAME)]
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     [Required]
     public long DateOfBirth { get; set; }
 
     // Navigation Props
-    public ICollection<Movie> Movies { get; set; }
+    public ICollection<Movie> Movies { get; set; } = [];
 
-    public ICollection<MovieRole> MovieRoles { get; set; }
+    public ICollection<MovieRole> MovieRoles { get; set; } = [];
 }

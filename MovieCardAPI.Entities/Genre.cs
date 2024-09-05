@@ -15,7 +15,7 @@ public class Genre
     public MovieGenreType Name { get; set; }
 
     // Navigation Prop
-    public ICollection<Movie> Movies { get; set; }
+    public ICollection<Movie> Movies { get; set; } = [];
 
-    public ICollection<MovieGenre> MovieGenre { get; set; }
+    public ICollection<MovieGenre> MovieGenre { get; set; } = [];
 }

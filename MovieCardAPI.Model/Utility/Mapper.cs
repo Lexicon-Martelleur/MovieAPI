@@ -1,6 +1,7 @@
 ﻿using MovieCardAPI.Entities;
 using MovieCardAPI.Model.DTO;
 using MovieCardAPI.Model.Validation;
+using MovieCardAPI.Model.ValueObjects;
 
 namespace MovieCardAPI.Model.Utility;
 
@@ -20,6 +21,18 @@ public class Mapper : IMapper
             Rating = movie.Rating,
             TimeStamp = movie.TimeStamp,
             Description = movie.Description
+        };
+    }
+
+    public MovieDTO GetMovieDTO()
+    {
+        return new MovieDTO
+        {
+            Id = 1,
+            Title = "Title",
+            Rating = 3,
+            TimeStamp = 123,
+            Description = "des"
         };
     }
 
