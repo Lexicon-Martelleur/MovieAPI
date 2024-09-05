@@ -83,15 +83,12 @@ public class MovieRepository : IMovieRepository
         }
     }
 
-    public async Task RemoveMovieRoles(
-        IEnumerable<int> newActorIds,
-        int movieId)
+    public async Task RemoveMovieRoles(int movieId)
     {
-        var removableRoles = await _context.MovieRoles
+        _context.MovieRoles.RemoveRange(await _context.MovieRoles
             .Where(item => item.MovieId == movieId)
-            .ToListAsync();
-
-        _context.MovieRoles.RemoveRange(removableRoles);
+            .ToListAsync()
+        );
     }
 
     public void UpdateMovieRoles(
@@ -100,25 +97,20 @@ public class MovieRepository : IMovieRepository
     {
         foreach (var actorId in newActorIds)
         {
-            var movieRoleEntry = new MovieRole
+            _context.MovieRoles.Add(new()
             {
                 MovieId = movieId,
                 ActorId = actorId
-            };
-
-            _context.MovieRoles.Add(movieRoleEntry);
+            });
         }
     }
 
-    public async Task RemoveMovieGenres(
-        IEnumerable<int> newGenreIds,
-        int movieId)
+    public async Task RemoveMovieGenres(int movieId)
     {
-        var removableGenres = await _context.MovieGenres
+        _context.MovieGenres.RemoveRange(await _context.MovieGenres
             .Where(item => item.MovieId == movieId)
-            .ToListAsync();
-
-        _context.MovieGenres.RemoveRange(removableGenres);
+            .ToListAsync()
+        );
     }
 
     public void UpdateMovieGenres(
@@ -127,13 +119,11 @@ public class MovieRepository : IMovieRepository
     {
         foreach (var genreId in newGenreIds)
         {
-            var movieGenreEntry = new MovieGenre
+            _context.MovieGenres.Add(new()
             {
                 MovieId = movieId,
                 GenreId = genreId
-            };
-
-            _context.MovieGenres.Add(movieGenreEntry);
+            });
         }
     }
 

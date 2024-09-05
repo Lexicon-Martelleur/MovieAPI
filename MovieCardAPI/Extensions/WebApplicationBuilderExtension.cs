@@ -51,7 +51,6 @@ public static class WebApplicationBuilderExtension
 
     public static void AddGlobalErrorHandlingExtension(this WebApplicationBuilder builder)
     {
-        // builder.Services.AddProblemDetails();
         builder.Services.AddProblemDetails(options =>
         {
             options.CustomizeProblemDetails = context =>

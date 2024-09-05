@@ -97,17 +97,14 @@ public class MovieService : IMovieService
         }
 
         var movieEntity = await _uow.MovieRepository.GetMovie(id);
-        if (movieEntity == null)
-        {
-            return null;
-        }
+        if (movieEntity == null) { return null; }
 
         var isStored = await _uow.ExecuteAndSaveTransaction([
             async () => {
-                await _uow.MovieRepository.RemoveMovieRoles(movie.ActorIds, movieEntity.Id);
+                await _uow.MovieRepository.RemoveMovieRoles(movieEntity.Id);
             },
             async () => {
-                await _uow.MovieRepository.RemoveMovieGenres(movie.GenreIds, movieEntity.Id);
+                await _uow.MovieRepository.RemoveMovieGenres(movieEntity.Id);
             },
             _uow.AsAsync(() => {
                 _uow.MovieRepository.UpdateMovieRoles(movie.ActorIds, movieEntity.Id);

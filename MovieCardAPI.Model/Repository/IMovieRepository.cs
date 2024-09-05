@@ -23,11 +23,11 @@ public interface IMovieRepository
 
     void CreateMovieGenres(Movie movie, IEnumerable<int> genreIds);
 
-    Task RemoveMovieRoles(IEnumerable<int> newGenreIds, int movieId);
+    Task RemoveMovieRoles(int movieId);
 
     void UpdateMovieRoles(IEnumerable<int> newActorIds, int movieId);
 
-    Task RemoveMovieGenres(IEnumerable<int> newGenreIds, int movieId);
+    Task RemoveMovieGenres(int movieId);
 
     void UpdateMovieGenres(IEnumerable<int> newGenreIds, int movieId);
     
