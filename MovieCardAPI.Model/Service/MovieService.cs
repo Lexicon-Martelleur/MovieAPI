@@ -6,14 +6,12 @@ namespace MovieCardAPI.Model.Service;
 
 public class MovieService : IMovieService
 {
-    // private readonly IMovieRepository _repository;
     private readonly IUnitOfWork _uow;
 
     private readonly IMapper _mapper;
 
     public MovieService(IUnitOfWork uow, IMapper mapper)
     {
-        // _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _uow = uow ?? throw new ArgumentNullException(nameof(uow));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
@@ -65,9 +63,28 @@ public class MovieService : IMovieService
         {
             return null;
         }
-        await _uow.MovieRepository.CreateMovie(movieEntity, movie.ActorIds, movie.GenreIds);
-        await _uow.SaveChangesAsync();
+
+        var isStored = await _uow.ExecuteAndSaveTransaction([
+            _uow.AsAsync(() => {
+                _uow.MovieRepository.CreateMovie(movieEntity, movie.ActorIds, movie.GenreIds);
+            }),
+            _uow.AsAsync(() => { 
+                _uow.MovieRepository.CreateMovieGenres(movieEntity, movie.ActorIds);
+                _uow.MovieRepository.CreateMovieRoles(movieEntity, movie.GenreIds);
+            })
+        ]);
+        if (!isStored) { return null; }
+               
         return _mapper.MapMovieEntityToMovieDTO(movieEntity);
+    }
+
+    public static Func<Task> AsAsync(Action syncAction)
+    {
+        return () =>
+        {
+            syncAction();
+            return Task.CompletedTask;
+        };
     }
 
     public async Task<MovieDTO?> UpdateMovie(int id, MovieForUpdateDTO movie)
@@ -85,22 +102,26 @@ public class MovieService : IMovieService
             return null;
         }
 
-
-        await _uow.MovieRepository.UpdateMovieRoles(
-            movie.ActorIds,
-            movieEntity.Id);
-
-        await _uow.MovieRepository.UpdateMovieGenres(
-            movie.GenreIds,
-            movieEntity.Id);
-
-        movieEntity.Title = movie.Title;
-        movieEntity.Rating = movie.Rating;
-        movieEntity.TimeStamp = movie.TimeStamp;
-        movieEntity.Description = movie.Description;
-        movieEntity.DirectorId = movie.DirectorId;
-
-        await _uow.SaveChangesAsync();
+        var isStored = await _uow.ExecuteAndSaveTransaction([
+            async () => {
+                await _uow.MovieRepository.RemoveMovieRoles(movie.ActorIds, movieEntity.Id);
+            },
+            async () => {
+                await _uow.MovieRepository.RemoveMovieGenres(movie.GenreIds, movieEntity.Id);
+            },
+            _uow.AsAsync(() => {
+                _uow.MovieRepository.UpdateMovieRoles(movie.ActorIds, movieEntity.Id);
+                _uow.MovieRepository.UpdateMovieGenres(movie.GenreIds, movieEntity.Id);
+            }),
+            _uow.AsAsync(() => {
+                movieEntity.Title = movie.Title;
+                movieEntity.Rating = movie.Rating;
+                movieEntity.TimeStamp = movie.TimeStamp;
+                movieEntity.Description = movie.Description;
+                movieEntity.DirectorId = movie.DirectorId;
+            })
+        ]);
+        if (!isStored) { return null; }
 
         return _mapper.MapMovieEntityToMovieDTO(movieEntity);
     }

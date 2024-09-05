@@ -26,11 +26,6 @@ public class MovieRepository : IMovieRepository
         return await _context.Movies.ToListAsync();
     }
 
-    public async Task<bool> SaveChangesAsync()
-    {
-        return await _context.SaveChangesAsync() >= 0;
-    }
-
     public async Task<bool> IsExistingDirector(int id)
     {
         return await _context.Directors.FirstOrDefaultAsync(i => i.Id == id) != null;
@@ -56,14 +51,16 @@ public class MovieRepository : IMovieRepository
         return matchingIds.Count == ids.Distinct().ToList().Count;
     }
 
-    public async Task CreateMovie(
+    public void CreateMovie(
         Movie movie,
         IEnumerable<int> actorIds,
         IEnumerable<int> genreIds)
     {
         _context.Movies.Add(movie);
-        await SaveChangesAsync();
-        
+    }
+
+    public void CreateMovieRoles(Movie movie, IEnumerable<int> actorIds)
+    {
         foreach (var id in actorIds)
         {
             _context.MovieRoles.Add(new MovieRole()
@@ -72,7 +69,10 @@ public class MovieRepository : IMovieRepository
                 ActorId = id,
             });
         }
+    }
 
+    public void CreateMovieGenres(Movie movie, IEnumerable<int> genreIds)
+    {
         foreach (var id in genreIds)
         {
             _context.MovieGenres.Add(new MovieGenre()
@@ -83,25 +83,21 @@ public class MovieRepository : IMovieRepository
         }
     }
 
-    public async Task UpdateMovieRoles(
+    public async Task RemoveMovieRoles(
         IEnumerable<int> newActorIds,
         int movieId)
     {
-        var oldActorIds = await _context.MovieRoles
+        var removableRoles = await _context.MovieRoles
             .Where(item => item.MovieId == movieId)
-            .Select(item => item.MovieId)
             .ToListAsync();
 
-        foreach (var actorId in oldActorIds) {
-            var existingMovieRole = await _context.MovieRoles
-                .FirstOrDefaultAsync(role => 
-                    role.MovieId == movieId);
-            if (existingMovieRole != null) { 
-                _context.MovieRoles.Remove(existingMovieRole);
-            }
-            await SaveChangesAsync();
-        }
+        _context.MovieRoles.RemoveRange(removableRoles);
+    }
 
+    public void UpdateMovieRoles(
+        IEnumerable<int> newActorIds,
+        int movieId)
+    {
         foreach (var actorId in newActorIds)
         {
             var movieRoleEntry = new MovieRole
@@ -112,30 +108,23 @@ public class MovieRepository : IMovieRepository
 
             _context.MovieRoles.Add(movieRoleEntry);
         }
-        await SaveChangesAsync();
     }
 
-    public async Task UpdateMovieGenres(
+    public async Task RemoveMovieGenres(
         IEnumerable<int> newGenreIds,
         int movieId)
     {
-        var oldGenresIds = await _context.MovieGenres
+        var removableGenres = await _context.MovieGenres
             .Where(item => item.MovieId == movieId)
-            .Select(item => item.MovieId)
             .ToListAsync();
 
-        foreach (var genreId in oldGenresIds)
-        {
-            var existingMovieGenre = await _context.MovieGenres
-                .FirstOrDefaultAsync(genre => 
-                    genre.MovieId == movieId);
-            if (existingMovieGenre != null)
-            {
-                _context.MovieGenres.Remove(existingMovieGenre);
-            }
-            await SaveChangesAsync();
-        }
+        _context.MovieGenres.RemoveRange(removableGenres);
+    }
 
+    public void UpdateMovieGenres(
+        IEnumerable<int> newGenreIds,
+        int movieId)
+    {
         foreach (var genreId in newGenreIds)
         {
             var movieGenreEntry = new MovieGenre
@@ -146,7 +135,6 @@ public class MovieRepository : IMovieRepository
 
             _context.MovieGenres.Add(movieGenreEntry);
         }
-        await SaveChangesAsync();
     }
 
     public async Task DeleteMovie(int id)

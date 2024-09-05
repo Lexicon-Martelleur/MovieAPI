@@ -14,20 +14,22 @@ public interface IMovieRepository
 
     Task<bool> IsExistingGenres(IEnumerable<int> ids);
 
-    Task CreateMovie(
+    void CreateMovie(
         Movie movie,
         IEnumerable<int> actorIds,
         IEnumerable<int> genreIds);
 
-    Task<bool> SaveChangesAsync();
+    void CreateMovieRoles(Movie movie, IEnumerable<int> actorIds);
 
-    Task UpdateMovieRoles(
-        IEnumerable<int> newGenreIds,
-        int movieId);
+    void CreateMovieGenres(Movie movie, IEnumerable<int> genreIds);
 
-    Task UpdateMovieGenres(
-        IEnumerable<int> newGenreIds,
-        int movieId);
+    Task RemoveMovieRoles(IEnumerable<int> newGenreIds, int movieId);
+
+    void UpdateMovieRoles(IEnumerable<int> newActorIds, int movieId);
+
+    Task RemoveMovieGenres(IEnumerable<int> newGenreIds, int movieId);
+
+    void UpdateMovieGenres(IEnumerable<int> newGenreIds, int movieId);
     
     Task DeleteMovie(int id);
 

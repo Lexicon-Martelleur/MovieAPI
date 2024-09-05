@@ -1,5 +1,7 @@
-﻿using MovieCardAPI.Infrastructure.Contexts;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using MovieCardAPI.Infrastructure.Contexts;
 using MovieCardAPI.Model.Repository;
+using System.Xml;
 
 namespace MovieCardAPI.Infrastructure.Repositories;
 
@@ -20,5 +22,36 @@ public class UnitOfWork : IUnitOfWork
     public async Task<bool> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync() >= 0;
+    }
+
+    public async Task<bool> ExecuteAndSaveTransaction(IEnumerable<Func<Task>> dbChangeActions)
+    {
+        var isSaved = false;
+        using var transaction = await _context.Database.BeginTransactionAsync();
+        try
+        {
+            foreach (var action in dbChangeActions)
+            {
+                action?.Invoke();
+                isSaved = await SaveChangesAsync();
+            }
+
+            await transaction.CommitAsync();
+            return isSaved;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            return false;
+        }
+    }
+
+    public Func<Task> AsAsync(Action syncAction)
+    {
+        return () =>
+        {
+            syncAction();
+            return Task.CompletedTask;
+        };
     }
 }
