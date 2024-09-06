@@ -61,11 +61,11 @@ public class MovieService : IMovieService
             throw new ResourceNotFoundException("Multiple resources");
         }
 
-        var isStored = await _uow.ExecuteAndSaveTransaction([
-            _uow.AsAsync(() => {
+        var isStored = await _uow.MovieRepository.CommitTransaction([
+            _uow.MovieRepository.AsAsync(() => {
                 _uow.MovieRepository.CreateMovie(movieEntity, movie.ActorIds, movie.GenreIds);
             }),
-            _uow.AsAsync(() => {
+            _uow.MovieRepository.AsAsync(() => {
                 _uow.MovieRepository.CreateMovieGenres(movieEntity, movie.ActorIds);
                 _uow.MovieRepository.CreateMovieRoles(movieEntity, movie.GenreIds);
             })
@@ -100,18 +100,18 @@ public class MovieService : IMovieService
         var movieEntity = await _uow.MovieRepository.GetMovie(id)
             ?? throw new MovieNotFoundException(id);
         
-        var isStored = await _uow.ExecuteAndSaveTransaction([
+        var isStored = await _uow.MovieRepository.CommitTransaction([
             async () => {
                 await _uow.MovieRepository.RemoveMovieRoles(movieEntity.Id);
             },
             async () => {
                 await _uow.MovieRepository.RemoveMovieGenres(movieEntity.Id);
             },
-            _uow.AsAsync(() => {
+            _uow.MovieRepository.AsAsync(() => {
                 _uow.MovieRepository.UpdateMovieRoles(movie.ActorIds, movieEntity.Id);
                 _uow.MovieRepository.UpdateMovieGenres(movie.GenreIds, movieEntity.Id);
             }),
-            _uow.AsAsync(() => {
+            _uow.MovieRepository.AsAsync(() => {
                 movieEntity.Title = movie.Title;
                 movieEntity.Rating = movie.Rating;
                 movieEntity.TimeStamp = movie.TimeStamp;

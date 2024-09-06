@@ -58,6 +58,11 @@ public static class WebApplicationBuilderExtension
     {
         builder.Services.AddScoped<IMovieService, MovieService>();
 
+        builder.Services.AddScoped<IMovieRepository, MovieRepository>();
+
+        builder.Services.AddScoped<Lazy<IMovieRepository>>(provider => 
+            new (() => provider.GetRequiredService<IMovieRepository>()));
+        
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         builder.Services.AddTransient<IMapper, Mapper>();

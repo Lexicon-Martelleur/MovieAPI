@@ -11,45 +11,17 @@ public class UnitOfWork : IUnitOfWork
 
     public IMovieRepository MovieRepository => _movieRepository.Value;
 
-    public UnitOfWork(MovieContext context)
+    public UnitOfWork(
+        MovieContext context,
+        Lazy<IMovieRepository> movieRepository
+        )
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
-        _movieRepository = new Lazy<IMovieRepository>(() => new MovieRepository(context));
+        _movieRepository = movieRepository; // = new Lazy<IMovieRepository>(() => new MovieRepository(context));
     }
 
     public async Task<bool> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync() >= 0;
-    }
-
-    public async Task<bool> ExecuteAndSaveTransaction(IEnumerable<Func<Task>> dbChangeActions)
-    {
-        var isSaved = false;
-        using var transaction = await _context.Database.BeginTransactionAsync();
-        try
-        {
-            foreach (var action in dbChangeActions)
-            {
-                action?.Invoke();
-                isSaved = await SaveChangesAsync();
-            }
-
-            await transaction.CommitAsync();
-            return isSaved;
-        }
-        catch
-        {
-            await transaction.RollbackAsync();
-            return false;
-        }
-    }
-
-    public Func<Task> AsAsync(Action syncAction)
-    {
-        return () =>
-        {
-            syncAction();
-            return Task.CompletedTask;
-        };
     }
 }

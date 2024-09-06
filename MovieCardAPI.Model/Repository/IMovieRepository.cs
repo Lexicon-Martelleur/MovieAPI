@@ -2,7 +2,7 @@
 
 namespace MovieCardAPI.Model.Repository;
 
-public interface IMovieRepository
+public interface IMovieRepository : IBaseRepository
 {
     Task<IEnumerable<Movie>> GetMovies();
 

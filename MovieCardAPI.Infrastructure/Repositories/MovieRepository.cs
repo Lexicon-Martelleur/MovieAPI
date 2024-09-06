@@ -5,35 +5,30 @@ using MovieCardAPI.Model.Repository;
 
 namespace MovieCardAPI.Infrastructure.Repositories;
 
-public class MovieRepository : IMovieRepository
+public class MovieRepository : BaseRepository, IMovieRepository
 {
-
-    private readonly MovieContext _context;
-    public MovieRepository(MovieContext context)
-    {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
-    }
+    public MovieRepository(MovieContext context) : base(context) {}
 
     public async Task<Movie?> GetMovie(int id)
     {
-        return await _context.Movies
+        return await Context.Movies
             .Where(item => item.Id == id)
             .FirstOrDefaultAsync();
     }
 
     public async Task<IEnumerable<Movie>> GetMovies()
     {
-        return await _context.Movies.ToListAsync();
+        return await Context.Movies.ToListAsync();
     }
 
     public async Task<bool> IsExistingDirector(int id)
     {
-        return await _context.Directors.FirstOrDefaultAsync(i => i.Id == id) != null;
+        return await Context.Directors.FirstOrDefaultAsync(i => i.Id == id) != null;
     }
 
     public async Task<bool> IsExistingActors(IEnumerable<int> ids)
     {
-        var matchingIds = await _context.Actors
+        var matchingIds = await Context.Actors
             .Where(actor => ids.Contains(actor.Id))
             .Select(actor => actor.Id)
             .ToListAsync();
@@ -43,7 +38,7 @@ public class MovieRepository : IMovieRepository
 
     public async Task<bool> IsExistingGenres(IEnumerable<int> ids)
     {
-        var matchingIds = await _context.Genres
+        var matchingIds = await Context.Genres
             .Where(genre => ids.Contains(genre.Id))
             .Select(genre => genre.Id)
             .ToListAsync();
@@ -56,14 +51,14 @@ public class MovieRepository : IMovieRepository
         IEnumerable<int> actorIds,
         IEnumerable<int> genreIds)
     {
-        _context.Movies.Add(movie);
+        Context.Movies.Add(movie);
     }
 
     public void CreateMovieRoles(Movie movie, IEnumerable<int> actorIds)
     {
         foreach (var id in actorIds)
         {
-            _context.MovieRoles.Add(new MovieRole()
+            Context.MovieRoles.Add(new MovieRole()
             {
                 MovieId = movie.Id,
                 ActorId = id,
@@ -75,7 +70,7 @@ public class MovieRepository : IMovieRepository
     {
         foreach (var id in genreIds)
         {
-            _context.MovieGenres.Add(new MovieGenre()
+            Context.MovieGenres.Add(new MovieGenre()
             {
                 MovieId = movie.Id,
                 GenreId = id
@@ -85,7 +80,7 @@ public class MovieRepository : IMovieRepository
 
     public async Task RemoveMovieRoles(int movieId)
     {
-        _context.MovieRoles.RemoveRange(await _context.MovieRoles
+        Context.MovieRoles.RemoveRange(await Context.MovieRoles
             .Where(item => item.MovieId == movieId)
             .ToListAsync()
         );
@@ -97,7 +92,7 @@ public class MovieRepository : IMovieRepository
     {
         foreach (var actorId in newActorIds)
         {
-            _context.MovieRoles.Add(new()
+            Context.MovieRoles.Add(new()
             {
                 MovieId = movieId,
                 ActorId = actorId
@@ -107,7 +102,7 @@ public class MovieRepository : IMovieRepository
 
     public async Task RemoveMovieGenres(int movieId)
     {
-        _context.MovieGenres.RemoveRange(await _context.MovieGenres
+        Context.MovieGenres.RemoveRange(await Context.MovieGenres
             .Where(item => item.MovieId == movieId)
             .ToListAsync()
         );
@@ -119,7 +114,7 @@ public class MovieRepository : IMovieRepository
     {
         foreach (var genreId in newGenreIds)
         {
-            _context.MovieGenres.Add(new()
+            Context.MovieGenres.Add(new()
             {
                 MovieId = movieId,
                 GenreId = genreId
@@ -129,7 +124,7 @@ public class MovieRepository : IMovieRepository
 
     public async Task DeleteMovie(int id)
     {
-        var movieEntity = await _context.Movies
+        var movieEntity = await Context.Movies
             .Where(item => item.Id == id)
             .FirstOrDefaultAsync();
 
@@ -137,15 +132,15 @@ public class MovieRepository : IMovieRepository
         {
             return;
         }
-        _context.Movies.Remove(movieEntity);
+        Context.Movies.Remove(movieEntity);
     }
 
     public async Task<IEnumerable<Actor>> GetMovieRoles(int movieId)
     {
-        return await _context.MovieRoles
+        return await Context.MovieRoles
             .Where(movieRole => movieRole.MovieId == movieId)
             .Join(
-                _context.Actors,
+                Context.Actors,
                 movieRole => movieRole.ActorId,
                 actor => actor.Id,
                 (moviRole, actor) => actor
@@ -155,10 +150,10 @@ public class MovieRepository : IMovieRepository
 
     public async Task<IEnumerable<Genre>> GetMovieGenres(int movieId)
     {
-        return await _context.MovieGenres
+        return await Context.MovieGenres
             .Where(moviGenre => moviGenre.MovieId == movieId)
             .Join(
-                _context.Genres,
+                Context.Genres,
                 moviGenre => moviGenre.GenreId,
                 genre => genre.Id,
                 (moviGenre, genre) => genre
@@ -168,7 +163,7 @@ public class MovieRepository : IMovieRepository
 
     public async Task<Director?> GetDirector(int movieId)
     {
-        return await _context.Movies
+        return await Context.Movies
             .Where(movie => movie.Id == movieId)
             .Select(movie => movie.Director)
             .FirstOrDefaultAsync();
@@ -176,7 +171,7 @@ public class MovieRepository : IMovieRepository
 
     public async Task<ContactInformation?> GetContactInformation(int directorId)
     {
-        return await _context.Directors
+        return await Context.Directors
             .Where(director => director.Id == directorId)
             .Select(director => director.ContactInformation)
             .FirstOrDefaultAsync();

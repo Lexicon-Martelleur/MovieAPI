@@ -6,7 +6,4 @@ public interface IUnitOfWork
 
     Task<bool> SaveChangesAsync();
 
-    Task<bool> ExecuteAndSaveTransaction(IEnumerable<Func<Task>> actions);
-
-    Func<Task> AsAsync(Action syncAction);
 }
