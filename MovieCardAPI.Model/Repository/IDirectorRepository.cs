@@ -2,7 +2,7 @@
 
 namespace MovieCardAPI.Model.Repository;
 
-public interface IDirectorRepository : IBaseRepository
+public interface IDirectorRepository : IBaseRepository<Director>
 {
     Task<bool> IsExistingDirector(int id);
 

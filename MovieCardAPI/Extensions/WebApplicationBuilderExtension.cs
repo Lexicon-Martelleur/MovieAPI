@@ -54,18 +54,63 @@ public static class WebApplicationBuilderExtension
         builder.Services.AddProblemDetails();
     }
 
-    public static void AddApplicationServicesExtension(this WebApplicationBuilder builder)
+    public static void AddApplicationDependenciesExtension(this WebApplicationBuilder builder)
     {
-        builder.Services.AddScoped<IServiceManager, ServiceManager>();
-        
-        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-        builder.Services.AddScoped<IMapper, Mapper>();
+        AddApplicationUtilities(builder.Services);
+        AddApplicationServices(builder.Services);
+        AddApplicationRepositories(builder.Services);
 
         if (builder.Environment.IsDevelopment())
         {
             builder.Configuration.AddUserSecrets<Program>();
         }
+    }
+
+    private static void AddApplicationUtilities(IServiceCollection collection)
+    {
+        collection.AddScoped<IMapper, Mapper>();
+    }
+
+    private static void AddApplicationRepositories(IServiceCollection collection)
+    {
+        collection.AddScoped<IUnitOfWork, UnitOfWork>();
+        collection.AddScoped<IActorRepository, ActorRepository>();
+        collection.AddScoped<IContactInformationRepository, ContactInformationRepository>();
+        collection.AddScoped<IDirectorRepository, DirectorRepository>();
+        collection.AddScoped<IGenreRepository, GenreRepository>();
+        collection.AddScoped<IMovieRepository, MovieRepository>();
+        collection.AddScoped<IMovieGenreRepository, MovieGenreRepository>();
+        collection.AddScoped<IMovieRoleRepository, MovieRoleRepository>();
+
+        collection.AddScoped<Lazy<IActorRepository>>(provider => new(
+            () => provider.GetRequiredService<IActorRepository>()));
+        
+        collection.AddScoped<Lazy<IContactInformationRepository>>(provider => new(
+            () => provider.GetRequiredService<IContactInformationRepository>()));
+        
+        collection.AddScoped<Lazy<IDirectorRepository>>(provider => new(
+            () => provider.GetRequiredService<IDirectorRepository>()));
+        
+        collection.AddScoped<Lazy<IGenreRepository>>(provider => new(
+            () => provider.GetRequiredService<IGenreRepository>()));
+        
+        collection.AddScoped<Lazy<IMovieRepository>>(provider => new(
+            () => provider.GetRequiredService<IMovieRepository>()));
+        
+        collection.AddScoped<Lazy<IMovieGenreRepository>>(provider => new(
+            () => provider.GetRequiredService<IMovieGenreRepository>()));
+        
+        collection.AddScoped<Lazy<IMovieRoleRepository>>(provider => new(
+            () => provider.GetRequiredService<IMovieRoleRepository>()));
+    }
+
+    private static void AddApplicationServices(IServiceCollection collection)
+    {
+        collection.AddScoped<IServiceManager, ServiceManager>();
+        collection.AddScoped<IMovieService, MovieService>();
+
+        collection.AddScoped<Lazy<IMovieService>>(provider => new(
+            () => provider.GetRequiredService<IMovieService>()));
     }
 
     public static void AddSwaggerServiceExtension(this WebApplicationBuilder builder)

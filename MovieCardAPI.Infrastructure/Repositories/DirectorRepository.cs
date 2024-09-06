@@ -5,7 +5,7 @@ using MovieCardAPI.Model.Repository;
 
 namespace MovieCardAPI.Infrastructure.Repositories;
 
-internal class DirectorRepository(MovieContext context) :
+public class DirectorRepository(MovieContext context) :
     BaseRepository<Director>(context), IDirectorRepository
 {
     private MovieContext context = context;

@@ -1,3 +1,5 @@
-﻿namespace MovieCardAPI.Model.Repository;
+﻿using MovieCardAPI.Entities;
 
-public interface IContactInformationRepository : IBaseRepository;
+namespace MovieCardAPI.Model.Repository;
+
+public interface IContactInformationRepository : IBaseRepository<ContactInformation>;

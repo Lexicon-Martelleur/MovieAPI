@@ -1,10 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MovieCardAPI.Infrastructure.Contexts;
 using MovieCardAPI.Model.Repository;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace MovieCardAPI.Infrastructure.Repositories;
 
-public class BaseRepository<EntityType> : IBaseRepository
+public class BaseRepository<EntityType> : IBaseRepository<EntityType>
      where EntityType : class
 {
     protected MovieContext Context { get; }
@@ -43,8 +45,18 @@ public class BaseRepository<EntityType> : IBaseRepository
     {
         return () =>
         {
-            syncAction();
+            syncAction?.Invoke();
             return Task.CompletedTask;
         };
     }
+
+    public IQueryable<EntityType> FindAll(bool trackChanges = true) => !trackChanges
+        ? ThisDbSet.AsNoTracking()
+        : ThisDbSet;
+
+    public IQueryable<EntityType> FindByCondition(
+        Expression<Func<EntityType, bool>> expression,
+        bool trackChanges = true) => !trackChanges
+        ? ThisDbSet.Where(expression).AsNoTracking()
+        : ThisDbSet.Where(expression);
 }

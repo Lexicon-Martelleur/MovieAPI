@@ -2,7 +2,7 @@
 
 namespace MovieCardAPI.Model.Repository;
 
-public interface IActorRepository : IBaseRepository
+public interface IActorRepository : IBaseRepository<Actor>
 {
     Task<bool> IsExistingActors(IEnumerable<int> ids);
 

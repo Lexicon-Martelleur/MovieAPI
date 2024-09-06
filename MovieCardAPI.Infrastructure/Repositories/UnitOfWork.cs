@@ -3,44 +3,31 @@ using MovieCardAPI.Model.Repository;
 
 namespace MovieCardAPI.Infrastructure.Repositories;
 
-public class UnitOfWork(MovieContext context) : IUnitOfWork
+public class UnitOfWork(
+    MovieContext context,
+    Lazy<IActorRepository> actorRepository,
+    Lazy<IContactInformationRepository> contactInformationRepository,
+    Lazy<IDirectorRepository> directorRepository,
+    Lazy<IGenreRepository> genreRepository,
+    Lazy<IMovieRepository> movieRepository,
+    Lazy<IMovieGenreRepository> movieGenreRepository,
+    Lazy<IMovieRoleRepository> movieRoleRepository) : IUnitOfWork
 {
     private readonly MovieContext _context = context ?? throw new ArgumentNullException(nameof(context));
 
-    private readonly Lazy<IActorRepository> _actorRepository = new(() =>
-    new ActorRepository(context));
+    public IActorRepository ActorRepository => actorRepository.Value;
 
-    private readonly Lazy<IContactInformationRepository> _contactInformationRepository = new(() =>
-        new ContactInformationRepository(context));
+    public IContactInformationRepository ContactInformationRepository => contactInformationRepository.Value;
 
-    private readonly Lazy<IDirectorRepository> _directorRepository = new(() =>
-        new DirectorRepository(context));
+    public IDirectorRepository DirectorRepository => directorRepository.Value;
 
-    private readonly Lazy<IGenreRepository> _genreRepository = new(() =>
-        new GenreRepository(context));
+    public IGenreRepository GenreRepository => genreRepository.Value;
 
-    private readonly Lazy<IMovieRepository> _movieRepository = new(() =>
-    new MovieRepository(context));
+    public IMovieRepository MovieRepository => movieRepository.Value;
 
-    private readonly Lazy<IMovieGenreRepository> _movieGenreRepository = new(() =>
-        new MovieGenreRepository(context));
+    public IMovieGenreRepository MovieGenreRepository => movieGenreRepository.Value;
 
-    private readonly Lazy<IMovieRoleRepository> _movieRoleRepository = new(() =>
-        new MovieRoleRepository(context));
-
-    public IActorRepository ActorRepository => _actorRepository.Value;
-
-    public IContactInformationRepository ContactInformationRepository => _contactInformationRepository.Value;
-
-    public IDirectorRepository DirectorRepository => _directorRepository.Value;
-
-    public IGenreRepository GenreRepository => _genreRepository.Value;
-
-    public IMovieRepository MovieRepository => _movieRepository.Value;
-
-    public IMovieGenreRepository MovieGenreRepository => _movieGenreRepository.Value;
-
-    public IMovieRoleRepository MovieRoleRepository => _movieRoleRepository.Value;
+    public IMovieRoleRepository MovieRoleRepository => movieRoleRepository.Value;
 
     public async Task<bool> SaveChangesAsync()
     {

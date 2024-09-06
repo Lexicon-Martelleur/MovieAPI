@@ -21,7 +21,7 @@ public class Program
         builder.AddDBServiceExtension();
         builder.AddCustomLoggingExtension();
         builder.AddGlobalExceptionHandlingExtension();
-        builder.AddApplicationServicesExtension();
+        builder.AddApplicationDependenciesExtension();
         builder.AddSwaggerServiceExtension();
         builder.AddCORSPolicyExtension();
         return builder.Build();

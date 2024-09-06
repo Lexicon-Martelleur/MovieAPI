@@ -1,6 +1,8 @@
-﻿namespace MovieCardAPI.Model.Repository;
+﻿using MovieCardAPI.Entities;
 
-public interface IMovieRoleRepository : IBaseRepository
+namespace MovieCardAPI.Model.Repository;
+
+public interface IMovieRoleRepository : IBaseRepository<MovieRole>
 {
     void CreateMovieRoles(int movieId, IEnumerable<int> actorIds);
 

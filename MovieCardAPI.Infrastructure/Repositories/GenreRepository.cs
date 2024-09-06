@@ -5,7 +5,7 @@ using MovieCardAPI.Model.Repository;
 
 namespace MovieCardAPI.Infrastructure.Repositories;
 
-internal class GenreRepository(MovieContext context) :
+public class GenreRepository(MovieContext context) :
     BaseRepository<Genre>(context), IGenreRepository
 {
     private MovieContext context = context;

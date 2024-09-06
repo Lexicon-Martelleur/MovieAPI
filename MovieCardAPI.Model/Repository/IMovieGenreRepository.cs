@@ -1,6 +1,8 @@
-﻿namespace MovieCardAPI.Model.Repository;
+﻿using MovieCardAPI.Entities;
 
-public interface IMovieGenreRepository : IBaseRepository
+namespace MovieCardAPI.Model.Repository;
+
+public interface IMovieGenreRepository : IBaseRepository<MovieGenre>
 {
     void CreateMovieGenres(int movieId, IEnumerable<int> genreIds);
 
