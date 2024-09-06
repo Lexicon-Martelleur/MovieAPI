@@ -4,6 +4,7 @@ namespace MovieCardAPI.Model.Repository;
 
 public interface IActorRepository : IBaseRepository
 {
-    Task<IEnumerable<Actor>> GetMovieRoles(int movieId);
+    Task<bool> IsExistingActors(IEnumerable<int> ids);
 
+    Task<IEnumerable<Actor>> GetActors(int movieId);
 }

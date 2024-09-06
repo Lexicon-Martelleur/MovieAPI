@@ -2,9 +2,19 @@
 
 public interface IUnitOfWork
 {
+    IActorRepository ActorRepository { get; }
+
+    IContactInformationRepository ContactInformationRepository { get; }
+
+    IDirectorRepository DirectorRepository { get; }
+
+    IGenreRepository GenreRepository { get; }
+
     IMovieRepository MovieRepository { get; }
 
-    IActorRepository ActorRepository { get; }
+    IMovieGenreRepository MovieGenreRepository { get; }
+
+    IMovieRoleRepository MovieRoleRepository { get; }
 
     Task<bool> SaveChangesAsync();
 }

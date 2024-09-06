@@ -33,13 +33,14 @@ public class MovieService : IMovieService
 
     public async Task<MovieDetailsDTO> GetMovieDetails(int id)
     {
-        var director = await _uow.MovieRepository.GetDirector(id)
+        var director = await _uow.MovieRepository.GeMovieDirector(id)
             ?? throw new DirectorNotFoundException(id);
-        var contactInformation = await _uow.MovieRepository.GetContactInformation(director.Id)
+        var contactInformation = await _uow.DirectorRepository
+            .GetContactInformation(director.Id)
             ?? throw new ContactInformationNotFoundException(id);
         
-        var actors = await _uow.ActorRepository.GetMovieRoles(id);
-        var genres = await _uow.MovieRepository.GetMovieGenres(id);
+        var actors = await _uow.ActorRepository.GetActors(id);
+        var genres = await _uow.GenreRepository.GetGenres(id);
         var movie = await _uow.MovieRepository.GetMovie(id)
             ?? throw new MovieNotFoundException(id);
         
@@ -54,9 +55,9 @@ public class MovieService : IMovieService
     public async Task<MovieDTO> CreateMovie(MovieForCreationDTO movie)
     {
         var movieEntity = _mapper.MapMovieForCreationDTOToMovieEntity(movie);
-        if (!(await _uow.MovieRepository.IsExistingDirector(movie.DirectorId)) ||
-            !(await _uow.MovieRepository.IsExistingActors(movie.ActorIds)) ||
-            !(await _uow.MovieRepository.IsExistingGenres(movie.GenreIds)))
+        if (!(await _uow.DirectorRepository.IsExistingDirector(movie.DirectorId)) ||
+            !(await _uow.ActorRepository.IsExistingActors(movie.ActorIds)) ||
+            !(await _uow.GenreRepository.IsExistingGenres(movie.GenreIds)))
         {
             throw new ResourceNotFoundException("Multiple resources");
         }
@@ -66,8 +67,8 @@ public class MovieService : IMovieService
                 _uow.MovieRepository.CreateMovie(movieEntity, movie.ActorIds, movie.GenreIds);
             }),
             _uow.MovieRepository.AsAsync(() => {
-                _uow.MovieRepository.CreateMovieGenres(movieEntity, movie.ActorIds);
-                _uow.MovieRepository.CreateMovieRoles(movieEntity, movie.GenreIds);
+                _uow.MovieGenreRepository.CreateMovieGenres(movieEntity.Id, movie.ActorIds);
+                _uow.MovieRoleRepository.CreateMovieRoles(movieEntity.Id, movie.GenreIds);
             })
         ]);
         if (!isStored)
@@ -81,9 +82,9 @@ public class MovieService : IMovieService
 
     public async Task<MovieDTO> UpdateMovie(int id, MovieForUpdateDTO movie)
     {
-        if (!(await _uow.MovieRepository.IsExistingDirector(movie.DirectorId)) ||
-            !(await _uow.MovieRepository.IsExistingActors(movie.ActorIds)) ||
-            !(await _uow.MovieRepository.IsExistingGenres(movie.GenreIds)))
+        if (!(await _uow.DirectorRepository.IsExistingDirector(movie.DirectorId)) ||
+            !(await _uow.ActorRepository.IsExistingActors(movie.ActorIds)) ||
+            !(await _uow.GenreRepository.IsExistingGenres(movie.GenreIds)))
         {
             throw new ResourceNotFoundException("Multiple resources");
         }
@@ -93,14 +94,14 @@ public class MovieService : IMovieService
         
         var isStored = await _uow.MovieRepository.CommitTransaction([
             async () => {
-                await _uow.MovieRepository.RemoveMovieRoles(movieEntity.Id);
+                await _uow.MovieRoleRepository.RemoveMovieRoles(movieEntity.Id);
             },
             async () => {
-                await _uow.MovieRepository.RemoveMovieGenres(movieEntity.Id);
+                await _uow.MovieGenreRepository.RemoveMovieGenres(movieEntity.Id);
             },
             _uow.MovieRepository.AsAsync(() => {
-                _uow.MovieRepository.UpdateMovieRoles(movie.ActorIds, movieEntity.Id);
-                _uow.MovieRepository.UpdateMovieGenres(movie.GenreIds, movieEntity.Id);
+                _uow.MovieRoleRepository.UpdateMovieRoles(movie.ActorIds, movieEntity.Id);
+                _uow.MovieGenreRepository.UpdateMovieGenres(movie.GenreIds, movieEntity.Id);
             }),
             _uow.MovieRepository.AsAsync(() => {
                 movieEntity.Title = movie.Title;

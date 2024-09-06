@@ -9,12 +9,12 @@ public class BaseRepository<EntityType> : IBaseRepository
 {
     protected MovieContext Context { get; }
 
-    protected DbSet<EntityType> DbSet { get; }
+    protected DbSet<EntityType> ThisDbSet { get; }
 
     public BaseRepository(MovieContext context)
     {
         Context = context ?? throw new ArgumentNullException(nameof(context));
-        DbSet = context.Set<EntityType>();
+        ThisDbSet = context.Set<EntityType>();
     }
 
     public async Task<bool> CommitTransaction(
