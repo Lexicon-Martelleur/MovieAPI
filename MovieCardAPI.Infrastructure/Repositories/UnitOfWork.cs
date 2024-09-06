@@ -3,19 +3,19 @@ using MovieCardAPI.Model.Repository;
 
 namespace MovieCardAPI.Infrastructure.Repositories;
 
-public class UnitOfWork : IUnitOfWork
+public class UnitOfWork(MovieContext context) : IUnitOfWork
 {
-    private readonly MovieContext _context;
+    private readonly MovieContext _context = context ?? throw new ArgumentNullException(nameof(context));
     
-    private readonly Lazy<IMovieRepository> _movieRepository;
+    private readonly Lazy<IMovieRepository> _movieRepository = new(() =>
+        new MovieRepository(context));
+
+    private readonly Lazy<IActorRepository> _actorRepository = new (() => 
+        new ActorRepository(context));
 
     public IMovieRepository MovieRepository => _movieRepository.Value;
 
-    public UnitOfWork(MovieContext context)
-    {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
-        _movieRepository = new Lazy<IMovieRepository>(() => new MovieRepository(context));
-    }
+    public IActorRepository ActorRepository => _actorRepository.Value;
 
     public async Task<bool> SaveChangesAsync()
     {

@@ -30,10 +30,8 @@ public interface IMovieRepository : IBaseRepository
     Task RemoveMovieGenres(int movieId);
 
     void UpdateMovieGenres(IEnumerable<int> newGenreIds, int movieId);
-    
-    Task DeleteMovie(int id);
 
-    Task<IEnumerable<Actor>> GetMovieRoles(int movieId);
+    Task DeleteMovie(int id);
 
     Task<IEnumerable<Genre>> GetMovieGenres(int movieId);
     

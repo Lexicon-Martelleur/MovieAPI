@@ -4,14 +4,17 @@ using MovieCardAPI.Model.Repository;
 
 namespace MovieCardAPI.Infrastructure.Repositories;
 
-public class BaseRepository : IBaseRepository
+public class BaseRepository<EntityType> : IBaseRepository
+     where EntityType : class
 {
     protected MovieContext Context { get; }
+
+    protected DbSet<EntityType> DbSet { get; }
 
     public BaseRepository(MovieContext context)
     {
         Context = context ?? throw new ArgumentNullException(nameof(context));
-        // DbSet = db.Set<T>();
+        DbSet = context.Set<EntityType>();
     }
 
     public async Task<bool> CommitTransaction(

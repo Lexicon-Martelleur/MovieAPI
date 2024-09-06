@@ -5,7 +5,7 @@ using MovieCardAPI.Model.Repository;
 
 namespace MovieCardAPI.Infrastructure.Repositories;
 
-public class MovieRepository : BaseRepository, IMovieRepository
+public class MovieRepository : BaseRepository<Movie>, IMovieRepository
 {
     public MovieRepository(MovieContext context) : base(context) {}
 
@@ -133,19 +133,6 @@ public class MovieRepository : BaseRepository, IMovieRepository
             return;
         }
         Context.Movies.Remove(movieEntity);
-    }
-
-    public async Task<IEnumerable<Actor>> GetMovieRoles(int movieId)
-    {
-        return await Context.MovieRoles
-            .Where(movieRole => movieRole.MovieId == movieId)
-            .Join(
-                Context.Actors,
-                movieRole => movieRole.ActorId,
-                actor => actor.Id,
-                (moviRole, actor) => actor
-            )
-            .ToListAsync();
     }
 
     public async Task<IEnumerable<Genre>> GetMovieGenres(int movieId)

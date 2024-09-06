@@ -38,7 +38,7 @@ public class MovieService : IMovieService
         var contactInformation = await _uow.MovieRepository.GetContactInformation(director.Id)
             ?? throw new ContactInformationNotFoundException(id);
         
-        var actors = await _uow.MovieRepository.GetMovieRoles(id);
+        var actors = await _uow.ActorRepository.GetMovieRoles(id);
         var genres = await _uow.MovieRepository.GetMovieGenres(id);
         var movie = await _uow.MovieRepository.GetMovie(id)
             ?? throw new MovieNotFoundException(id);
