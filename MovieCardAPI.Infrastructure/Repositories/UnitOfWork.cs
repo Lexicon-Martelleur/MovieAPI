@@ -11,13 +11,10 @@ public class UnitOfWork : IUnitOfWork
 
     public IMovieRepository MovieRepository => _movieRepository.Value;
 
-    public UnitOfWork(
-        MovieContext context,
-        Lazy<IMovieRepository> movieRepository
-        )
+    public UnitOfWork(MovieContext context)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
-        _movieRepository = movieRepository; // = new Lazy<IMovieRepository>(() => new MovieRepository(context));
+        _movieRepository = new Lazy<IMovieRepository>(() => new MovieRepository(context));
     }
 
     public async Task<bool> SaveChangesAsync()

@@ -79,15 +79,6 @@ public class MovieService : IMovieService
         return _mapper.MapMovieEntityToMovieDTO(movieEntity);
     }
 
-    public static Func<Task> AsAsync(Action syncAction)
-    {
-        return () =>
-        {
-            syncAction();
-            return Task.CompletedTask;
-        };
-    }
-
     public async Task<MovieDTO> UpdateMovie(int id, MovieForUpdateDTO movie)
     {
         if (!(await _uow.MovieRepository.IsExistingDirector(movie.DirectorId)) ||

@@ -5,5 +5,4 @@ public interface IUnitOfWork
     IMovieRepository MovieRepository { get; }
 
     Task<bool> SaveChangesAsync();
-
 }

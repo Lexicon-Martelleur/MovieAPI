@@ -14,9 +14,9 @@ public class MovieController : ControllerBase
 {
 
     private readonly ILogger<MovieController> _logger;
-    private readonly IMovieService _service;
+    private readonly IServiceManager _service;
 
-    public MovieController(ILogger<MovieController> logger, IMovieService service)
+    public MovieController(ILogger<MovieController> logger, IServiceManager service)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _service = service ?? throw new ArgumentNullException(nameof(service));
@@ -25,7 +25,7 @@ public class MovieController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MovieDTO>>> GetMovies()
     {
-        var movieDTOs = await _service.GetMovies();
+        var movieDTOs = await _service.MovieService.GetMovies();
         return Ok(movieDTOs);
     }
 
@@ -34,7 +34,7 @@ public class MovieController : ControllerBase
         [FromRoute] int id
     )
     {
-        var movieDTO = await _service.GetMovie(id);
+        var movieDTO = await _service.MovieService.GetMovie(id);
         return Ok(movieDTO);
     }
 
@@ -43,7 +43,7 @@ public class MovieController : ControllerBase
         [FromRoute] int id
     )
     {
-        var movieDetailsDTO = await _service.GetMovieDetails(id);
+        var movieDetailsDTO = await _service.MovieService.GetMovieDetails(id);
         return Ok(movieDetailsDTO);
     }
 
@@ -51,7 +51,7 @@ public class MovieController : ControllerBase
     public async Task<ActionResult<MovieDTO>> CreateMovie(
         [FromBody] MovieForCreationDTO movie)
     {
-        var createdMovie = await _service.CreateMovie(movie);
+        var createdMovie = await _service.MovieService.CreateMovie(movie);
         return CreatedAtRoute(nameof(CreateMovie), createdMovie);
     }
 
@@ -60,7 +60,7 @@ public class MovieController : ControllerBase
         [FromRoute] int id,
         [FromBody] MovieForUpdateDTO movie)
     {
-        var updatedMovie = await _service.UpdateMovie(id, movie);
+        var updatedMovie = await _service.MovieService.UpdateMovie(id, movie);
         return Ok(updatedMovie);
     }
 
@@ -68,7 +68,7 @@ public class MovieController : ControllerBase
     public async Task<IActionResult> DeleteMovie(
         [FromRoute] int id)
     {
-        var isDeleted = await _service.DeleteMovie(id);
+        var isDeleted = await _service.MovieService.DeleteMovie(id);
         if (!isDeleted)
         {
             return NotFound(new ApiError(
