@@ -12,7 +12,6 @@ namespace MovieCardAPI.Presentation.Controllers;
 [Route(Router.MOVIE)]
 public class MovieController : ControllerBase
 {
-
     private readonly ILogger<MovieController> _logger;
     private readonly IServiceManager _service;
 

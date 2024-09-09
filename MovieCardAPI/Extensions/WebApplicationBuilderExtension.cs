@@ -108,9 +108,17 @@ public static class WebApplicationBuilderExtension
     {
         collection.AddScoped<IServiceManager, ServiceManager>();
         collection.AddScoped<IMovieService, MovieService>();
+        collection.AddScoped<IActorService, ActorService>();
+        collection.AddScoped<IDirectorService, DirectorService>();
 
         collection.AddScoped<Lazy<IMovieService>>(provider => new(
             () => provider.GetRequiredService<IMovieService>()));
+
+        collection.AddScoped<Lazy<IActorService>>(provider => new(
+            () => provider.GetRequiredService<IActorService>()));
+
+        collection.AddScoped<Lazy<IDirectorService>>(provider => new(
+            () => provider.GetRequiredService<IDirectorService>()));
     }
 
     public static void AddSwaggerServiceExtension(this WebApplicationBuilder builder)

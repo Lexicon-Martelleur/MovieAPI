@@ -31,4 +31,9 @@ public class ActorRepository(MovieContext context) :
             )
             .ToListAsync();
     }
+
+    public async Task<IEnumerable<Actor>> GetAllActors()
+    {
+        return await FindAll(false).ToListAsync();
+    }
 }

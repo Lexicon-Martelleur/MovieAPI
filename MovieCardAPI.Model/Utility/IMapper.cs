@@ -1,5 +1,6 @@
 ﻿using MovieCardAPI.Entities;
 using MovieCardAPI.Model.DTO;
+using MovieCardAPI.Model.Validation;
 
 namespace MovieCardAPI.Model.Utility;
 
@@ -18,4 +19,18 @@ public interface IMapper
         IEnumerable<Genre> genres,
         ContactInformation contactInformation,
         Director director);
+
+    IEnumerable<ActorDTO> MapActorEntitiesToActorDTOs(
+        IEnumerable<Actor> actors);
+
+    ActorDTO MapActorEntityToActorDTO(Actor actor);
+
+    IEnumerable<DirectorDTO> MapDirectorEntitiesToDirectorDTOs(
+        IEnumerable<Director> directors);
+
+    DirectorDTO MapDirectorEntityToDirectorDTO(
+        Director director,
+        ContactInformation contactInformation);
+
+    GenreDTO MapGenreEntityToGenreDTO(Genre genre);
 }

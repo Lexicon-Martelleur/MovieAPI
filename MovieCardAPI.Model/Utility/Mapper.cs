@@ -1,7 +1,6 @@
 ﻿using MovieCardAPI.Entities;
 using MovieCardAPI.Model.DTO;
 using MovieCardAPI.Model.Validation;
-using MovieCardAPI.Model.ValueObjects;
 
 namespace MovieCardAPI.Model.Utility;
 
@@ -68,7 +67,13 @@ public class Mapper : IMapper
         };
     }
 
-    private ActorDTO MapActorEntityToActorDTO(Actor actor)
+    public IEnumerable<ActorDTO> MapActorEntitiesToActorDTOs(
+        IEnumerable<Actor> actors)
+    {
+        return actors.Select(MapActorEntityToActorDTO);
+    }
+
+    public ActorDTO MapActorEntityToActorDTO(Actor actor)
     {
         return ValidationService.ValidateInstance(new ActorDTO
         {
@@ -78,15 +83,24 @@ public class Mapper : IMapper
         });
     }
 
-    private GenreDTO MapGenreEntityToGenreDTO(Genre genre)
+    public IEnumerable<DirectorDTO> MapDirectorEntitiesToDirectorDTOs(
+        IEnumerable<Director> directors)
     {
-        return new GenreDTO(
-            genre.Id,
-            genre.Name
-        );
+        return directors.Select(MapDirectorEntityToDirectorDTO);
     }
 
-    private DirectorDTO MapDirectorEntityToDirectorDTO(
+    public DirectorDTO MapDirectorEntityToDirectorDTO(
+        Director director)
+    {
+        return ValidationService.ValidateInstance(new DirectorDTO
+        {
+            Id = director.Id,
+            Name = director.Name,
+            DateOfBirth = director.DateOfBirth
+        });
+    }
+
+    public DirectorDTO MapDirectorEntityToDirectorDTO(
         Director director,
         ContactInformation contactInformation)
     {
@@ -107,5 +121,13 @@ public class Mapper : IMapper
             Email = contactInformation.Email,
             PhoneNumber = contactInformation.PhoneNumber
         });
+    }
+
+    public GenreDTO MapGenreEntityToGenreDTO(Genre genre)
+    {
+        return new GenreDTO(
+            genre.Id,
+            genre.Name
+        );
     }
 }

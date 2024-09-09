@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MovieCardAPI.Infrastructure.Contexts;
 using MovieCardAPI.Model.Repository;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace MovieCardAPI.Infrastructure.Repositories;

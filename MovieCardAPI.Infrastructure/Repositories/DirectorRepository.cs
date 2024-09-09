@@ -22,4 +22,9 @@ public class DirectorRepository(MovieContext context) :
             .Select(director => director.ContactInformation)
             .FirstOrDefaultAsync();
     }
+
+    public async Task<IEnumerable<Director>> GetAllDirectors()
+    {
+        return await FindAll(false).ToListAsync();
+    }
 }
