@@ -10,4 +10,3 @@ public enum MovieGenreType
     Horror = 5,
     Romance = 6
 }
-

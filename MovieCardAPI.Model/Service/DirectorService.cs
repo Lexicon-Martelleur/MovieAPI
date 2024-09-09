@@ -19,7 +19,7 @@ public class DirectorService : IDirectorService
 
     public async Task<IEnumerable<DirectorDTO>> GetDirectors()
     {
-        IEnumerable<Director> directorEntities = await _uow.DirectorRepository.GetAllDirectors();
+        var directorEntities = await _uow.DirectorRepository.GetAllDirectors();
         return _mapper.MapDirectorEntitiesToDirectorDTOs(directorEntities);
     }
 }

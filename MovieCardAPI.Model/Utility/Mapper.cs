@@ -1,4 +1,5 @@
-﻿using MovieCardAPI.Entities;
+﻿using MovieCardAPI.Constants;
+using MovieCardAPI.Entities;
 using MovieCardAPI.Model.DTO;
 using MovieCardAPI.Model.Validation;
 
@@ -123,11 +124,32 @@ public class Mapper : IMapper
         });
     }
 
+    public IEnumerable<GenreDTO> MapGenreEntitiesToGenreDTOs(
+        IEnumerable<Genre> genres)
+    {
+        return genres.Select(MapGenreEntityToGenreDTO);
+    }
+
     public GenreDTO MapGenreEntityToGenreDTO(Genre genre)
     {
+
+
         return new GenreDTO(
             genre.Id,
-            genre.Name
+            genre.Name,
+            GetGenreNameAsString(genre.Name)
         );
     }
+
+    private string GetGenreNameAsString(MovieGenreType genre) => genre switch
+    {
+        MovieGenreType.Unknown => "Unknown",
+        MovieGenreType.Action => "Action",
+        MovieGenreType.Comedy => "Comedy",
+        MovieGenreType.Documentary => "Documentary",
+        MovieGenreType.Drama => "Drama",
+        MovieGenreType.Horror => "Horror",
+        MovieGenreType.Romance => "Romance",
+        _ => throw new ArgumentException($"Invalid genre"),
+    };
 }

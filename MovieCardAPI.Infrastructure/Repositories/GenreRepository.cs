@@ -32,4 +32,9 @@ public class GenreRepository(MovieContext context) :
             )
             .ToListAsync();
     }
+
+    public async Task<IEnumerable<Genre>> GetAllGenres()
+    {
+        return await FindAll(false).ToListAsync();
+    }
 }

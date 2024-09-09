@@ -32,5 +32,8 @@ public interface IMapper
         Director director,
         ContactInformation contactInformation);
 
+    IEnumerable<GenreDTO> MapGenreEntitiesToGenreDTOs(
+        IEnumerable<Genre> genres);
+
     GenreDTO MapGenreEntityToGenreDTO(Genre genre);
 }
