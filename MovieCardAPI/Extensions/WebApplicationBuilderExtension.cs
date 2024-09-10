@@ -7,6 +7,7 @@ using MovieCardAPI.Model.Utility;
 using MovieCardAPI.Constants;
 using System.Reflection.Metadata;
 using MovieCardAPI.Infrastructure.Repositories;
+using MovieCardAPI.Presentation.Constants;
 
 namespace MovieCardAPI.Extensions;
 
@@ -141,14 +142,16 @@ public static class WebApplicationBuilderExtension
             {
                 builder.AllowAnyOrigin()
                     .AllowAnyMethod()
-                    .AllowAnyHeader();
+                    .AllowAnyHeader()
+                    .WithExposedHeaders(CustomHeader.Pagination); ;
             });
 
             options.AddPolicy(AppConfig.CorsPolicies.Prod, builder =>
             {
                 builder.WithOrigins("https://my-movie-card.org")
                     .AllowAnyMethod()
-                    .AllowAnyHeader();
+                    .AllowAnyHeader()
+                    .WithExposedHeaders(CustomHeader.Pagination); ;
             });
         });
     }

@@ -3,6 +3,6 @@ namespace MovieCardAPI.Presentation.Constants;
 
 public static class CustomHeader
 {
-    internal const string Pagination = "X-Pagination"; 
+    public const string Pagination = "X-Pagination"; 
 }
 
