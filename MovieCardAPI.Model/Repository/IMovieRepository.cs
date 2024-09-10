@@ -1,10 +1,12 @@
 ﻿using MovieCardAPI.Entities;
+using MovieCardAPI.Model.DTO;
 
 namespace MovieCardAPI.Model.Repository;
 
 public interface IMovieRepository : IBaseRepository<Movie>
 {
-    Task<IEnumerable<Movie>> GetMovies();
+    Task<(IEnumerable<Movie> Movies, PaginationMetaDTO Pagination)> GetMovies(
+        PaginationDTO pagination);
 
     Task<Movie?> GetMovie(int id);
 

@@ -2,6 +2,9 @@
 using MovieCardAPI.Infrastructure.Contexts;
 using MovieCardAPI.Entities;
 using MovieCardAPI.Model.Repository;
+using MovieCardAPI.Model.DTO;
+using MovieCardAPI.Model.Validation;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace MovieCardAPI.Infrastructure.Repositories;
 
@@ -16,9 +19,24 @@ public class MovieRepository : BaseRepository<Movie>, IMovieRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<Movie>> GetMovies()
+    public async Task<(IEnumerable<Movie> Movies, PaginationMetaDTO Pagination)>GetMovies(
+        PaginationDTO pagination)
     {
-        return await ThisDbSet.ToListAsync();
+        var totalItemCount = await ThisDbSet.CountAsync();
+
+        var paginationMeta = ValidationService.ValidateInstance(new PaginationMetaDTO
+        {
+            TotalItemCount = totalItemCount,
+            PageSize = pagination.PageSize,
+            PageNr = pagination.PageNr
+        });
+
+        var movies = await FindAll(false)
+            .Skip(paginationMeta.PageSize * (paginationMeta.PageNr - 1))
+            .Take(paginationMeta.PageSize)
+            .ToListAsync();
+
+        return (Movies: movies, Pagination: paginationMeta);
     }
 
     public void CreateMovie(

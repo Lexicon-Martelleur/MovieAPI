@@ -1,4 +1,5 @@
-﻿using MovieCardAPI.Model.DTO;
+﻿using MovieCardAPI.Entities;
+using MovieCardAPI.Model.DTO;
 using MovieCardAPI.Model.Exeptions;
 using MovieCardAPI.Model.Repository;
 using MovieCardAPI.Model.Utility;
@@ -25,10 +26,12 @@ public class MovieService : IMovieService
         return movie;
     }
 
-    public async Task<IEnumerable<MovieDTO>> GetMovies()
+    public async Task<(IEnumerable<MovieDTO> Movies, PaginationMetaDTO Pagination)> GetMovies(
+        PaginationDTO pagination)
     {
-        var movieEntities = await _uow.MovieRepository.GetMovies();
-        return _mapper.MapMovieEntitiesToMovieDTOs(movieEntities);
+        var ( Movies, Pagination ) = await _uow.MovieRepository.GetMovies(pagination);
+        var movieDTOs = _mapper.MapMovieEntitiesToMovieDTOs(Movies);
+        return (Movies: movieDTOs, Pagination);
     }
 
     public async Task<MovieDetailsDTO> GetMovieDetails(int id)

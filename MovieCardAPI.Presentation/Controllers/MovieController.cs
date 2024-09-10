@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MovieCardAPI.Model.DTO;
@@ -5,6 +6,7 @@ using MovieCardAPI.Model.Service;
 using MovieCardAPI.Presentation.Constants;
 using MovieCardAPI.Presentation.Error;
 using System.Net;
+using System.Text.Json;
 
 namespace MovieCardAPI.Presentation.Controllers;
 
@@ -22,10 +24,15 @@ public class MovieController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<MovieDTO>>> GetMovies()
+    public async Task<ActionResult<IEnumerable<MovieDTO>>> GetMovies(
+        [FromQuery] PaginationDTO query)
     {
-        var movieDTOs = await _service.MovieService.GetMovies();
-        return Ok(movieDTOs);
+        var (Movies, Pagination) = await _service.MovieService.GetMovies(query);
+        Response.Headers.Append(
+            CustomHeader.Pagination,
+            JsonSerializer.Serialize(Pagination)
+        );
+        return Ok(Movies);
     }
 
     [HttpGet("{id}")]
