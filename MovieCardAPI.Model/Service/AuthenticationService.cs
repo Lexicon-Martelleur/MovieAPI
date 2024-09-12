@@ -152,12 +152,12 @@ public class AuthenticationService : IAuthenticationService
 
         ApplicationUser? user = await _userManager.FindByNameAsync(principal.Identity?.Name!);
 
-        var invalitToken = user == null ||
+        var invalidToken = user == null ||
             user.RefreshToken != token.RefreshToken ||
             user.RefreshTokenExpireTime <= DateTime.Now;
 
         //TODO: Should be handled with middle-ware and custom exception class
-        if (invalitToken) { throw new ArgumentException("Invalid TokenDTO"); }
+        if (invalidToken) { throw new ArgumentException("Invalid TokenDTO"); }
 
         _user = user;
 
