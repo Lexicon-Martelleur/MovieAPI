@@ -4,7 +4,8 @@ public class ServiceManager(
     Lazy<IMovieService> movieService,
     Lazy<IActorService> actorService,
     Lazy<IDirectorService> directorService,
-    Lazy<IGenreService> genreService
+    Lazy<IGenreService> genreService,
+    Lazy<IAuthenticationService> authenticationService
 ) : IServiceManager
 {
     public IMovieService MovieService => movieService.Value;
@@ -14,4 +15,6 @@ public class ServiceManager(
     public IDirectorService DirectorService => directorService.Value;
 
     public IGenreService GenreService => genreService.Value;
+
+    public IAuthenticationService AuthenticationService => authenticationService.Value;
 }

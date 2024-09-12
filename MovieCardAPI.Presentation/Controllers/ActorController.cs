@@ -7,7 +7,7 @@ using MovieCardAPI.Presentation.Constants;
 namespace MovieCardAPI.Presentation.Controllers;
 
 [ApiController]
-[Route(Router.ACTOR)]
+[Route(AppRouter.ACTOR)]
 public class ActorController : ControllerBase
 {
     private readonly ILogger<ActorController> _logger;

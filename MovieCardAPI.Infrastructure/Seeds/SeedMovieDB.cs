@@ -3,12 +3,19 @@ using Microsoft.EntityFrameworkCore;
 using MovieCardAPI.Constants;
 using MovieCardAPI.Infrastructure.Contexts;
 using MovieCardAPI.Entities;
+using Bogus.DataSets;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 
 namespace MovieCardAPI.Infrastructure.Seeds;
 
 public static class SeedMovieDB
 {
-    public static async Task RunAsync(MovieContext context)
+    public static async Task RunAsync(
+        MovieContext context,
+        IConfiguration configuration,
+        UserManager<ApplicationUser> userManager,
+        RoleManager<IdentityRole> roleManager)
     {
         if (await IsExistingMovieData(context)) {
             return;
@@ -33,6 +40,10 @@ public static class SeedMovieDB
 
         var movieGenres = CreateMovieGenres(genres, movies);
         await context.AddRangeAsync(movieGenres);
+
+        await CreateUserRolesAsync(roleManager);
+
+        await CreateUsersAsync(20, configuration, userManager);
 
         await context.SaveChangesAsync();
     }
@@ -180,5 +191,54 @@ public static class SeedMovieDB
         }
 
         return movieGenres;
+    }
+
+
+    private static async Task CreateUserRolesAsync(
+        RoleManager<IdentityRole> roleManager)
+    {
+        foreach (var roleName in UserRoles.ALL_ROLES)
+        {
+            if (await roleManager.RoleExistsAsync(roleName)) continue;
+            var role = new IdentityRole { Name = roleName };
+            var result = await roleManager.CreateAsync(role);
+
+            if (!result.Succeeded) throw new Exception(string.Join("\n", result.Errors));
+        }
+    }
+
+    private static async Task CreateUsersAsync(
+        int nrOfUsers,
+        IConfiguration configuration,
+        UserManager<ApplicationUser> userManager)
+    {
+        string[] positions = UserRoles.ALL_ROLES.ToArray();
+
+        var faker = new Faker<ApplicationUser>("en").Rules((f, user) =>
+        {
+            user.Name = f.Person.FullName;
+            user.Position = positions[f.Random.Int(0, positions.Length - 1)];
+            user.Email = f.Person.Email;
+            user.UserName = f.Person.UserName;
+        });
+
+        var users = faker.Generate(nrOfUsers);
+
+        var passWord = AppConfig.GetPassword(configuration);
+
+        foreach (var user in users)
+        {
+            var result = await userManager.CreateAsync(user, passWord);
+            if (!result.Succeeded) throw new Exception(string.Join("\n", result.Errors));
+
+            if (user.Position == UserRoles.ADMIN)
+            {
+                await userManager.AddToRoleAsync(user, UserRoles.ADMIN);
+            }
+            else
+            {
+                await userManager.AddToRoleAsync(user, UserRoles.USER);
+            }
+        }
     }
 }

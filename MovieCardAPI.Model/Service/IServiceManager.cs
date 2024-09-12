@@ -9,4 +9,6 @@ public interface IServiceManager
     IDirectorService DirectorService { get; }
 
     IGenreService GenreService { get; }
+
+    IAuthenticationService AuthenticationService { get; }
 }

@@ -4,7 +4,7 @@ using MovieCardAPI.Model.Validation;
 
 namespace MovieCardAPI.Model.Utility;
 
-public interface IMapper
+public interface ICustomMapper
 {
     IEnumerable<MovieDTO> MapMovieEntitiesToMovieDTOs(IEnumerable<Movie> movieEntities);
 

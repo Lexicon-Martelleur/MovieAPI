@@ -9,9 +9,9 @@ public class DirectorService : IDirectorService
 {
     private readonly IUnitOfWork _uow;
 
-    private readonly IMapper _mapper;
+    private readonly ICustomMapper _mapper;
 
-    public DirectorService(IUnitOfWork uow, IMapper mapper)
+    public DirectorService(IUnitOfWork uow, ICustomMapper mapper)
     {
         _uow = uow ?? throw new ArgumentNullException(nameof(uow));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));

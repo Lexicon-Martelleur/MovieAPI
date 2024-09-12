@@ -4,7 +4,6 @@ using MovieCardAPI.Entities;
 using MovieCardAPI.Model.Repository;
 using MovieCardAPI.Model.DTO;
 using MovieCardAPI.Model.Validation;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace MovieCardAPI.Infrastructure.Repositories;
 

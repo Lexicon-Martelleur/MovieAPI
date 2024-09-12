@@ -11,7 +11,7 @@ using System.Text.Json;
 namespace MovieCardAPI.Presentation.Controllers;
 
 [ApiController]
-[Route(Router.MOVIE)]
+[Route(AppRouter.MOVIE)]
 public class MovieController : ControllerBase
 {
     private readonly ILogger<MovieController> _logger;

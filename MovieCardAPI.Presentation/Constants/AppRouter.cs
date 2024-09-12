@@ -1,7 +1,9 @@
 ﻿namespace MovieCardAPI.Presentation.Constants;
 
-internal class Router
+internal class AppRouter
 {
+    internal const string AUTH = "api/authenticate";
+
     internal const string MOVIE = "api/movies";
 
     internal const string ACTOR = "api/actors";

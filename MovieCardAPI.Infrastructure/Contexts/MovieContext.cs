@@ -1,10 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MovieCardAPI.Infrastructure.Configurations;
 using MovieCardAPI.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace MovieCardAPI.Infrastructure.Contexts;
 
-public class MovieContext : DbContext
+public class MovieContext : IdentityDbContext<ApplicationUser, IdentityRole, string>
 {
     public DbSet<Actor> Actors { get; set; }
 
@@ -36,6 +38,7 @@ public class MovieContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        base.OnModelCreating(builder);
         builder.ApplyConfiguration(new MovieConfigurations());
         builder.ApplyConfiguration(new MovieRoleConfigurations());
         builder.ApplyConfiguration(new MovieGenreConfigurations());     

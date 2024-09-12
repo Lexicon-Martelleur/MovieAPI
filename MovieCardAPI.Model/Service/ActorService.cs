@@ -8,9 +8,9 @@ public class ActorService : IActorService
 {
     private readonly IUnitOfWork _uow;
 
-    private readonly IMapper _mapper;
+    private readonly ICustomMapper _mapper;
 
-    public ActorService(IUnitOfWork uow, IMapper mapper)
+    public ActorService(IUnitOfWork uow, ICustomMapper mapper)
     {
         _uow = uow ?? throw new ArgumentNullException(nameof(uow));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));

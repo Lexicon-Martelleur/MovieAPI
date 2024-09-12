@@ -8,6 +8,13 @@ using MovieCardAPI.Constants;
 using System.Reflection.Metadata;
 using MovieCardAPI.Infrastructure.Repositories;
 using MovieCardAPI.Presentation.Constants;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using MovieCardAPI.Entities;
+using MovieCardAPI.Model.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace MovieCardAPI.Extensions;
 
@@ -69,7 +76,7 @@ public static class WebApplicationBuilderExtension
 
     private static void AddApplicationUtilities(IServiceCollection collection)
     {
-        collection.AddScoped<IMapper, Mapper>();
+        collection.AddScoped<ICustomMapper, CustomMapper>();
     }
 
     private static void AddApplicationRepositories(IServiceCollection collection)
@@ -107,11 +114,13 @@ public static class WebApplicationBuilderExtension
 
     private static void AddApplicationServices(IServiceCollection collection)
     {
+        collection.AddAutoMapper(typeof(AutoMapperProfile));
         collection.AddScoped<IServiceManager, ServiceManager>();
         collection.AddScoped<IMovieService, MovieService>();
         collection.AddScoped<IActorService, ActorService>();
         collection.AddScoped<IDirectorService, DirectorService>();
         collection.AddScoped<IGenreService, GenreService>();
+        collection.AddScoped<IAuthenticationService, AuthenticationService>();
 
         collection.AddScoped<Lazy<IMovieService>>(provider => new(
             () => provider.GetRequiredService<IMovieService>()));
@@ -124,6 +133,21 @@ public static class WebApplicationBuilderExtension
 
         collection.AddScoped<Lazy<IGenreService>>(provider => new(
             () => provider.GetRequiredService<IGenreService>()));
+
+        collection.AddScoped<Lazy<IAuthenticationService>>(provider => new(
+            () => provider.GetRequiredService<IAuthenticationService>()));
+    }
+
+    // TODO Use this for services and repositories.
+    private static void AddScopedLazyService<IServiceType, ServiceType>(
+        IServiceCollection collection)
+        where ServiceType : class, IServiceType
+        where IServiceType : class
+    {
+        collection.AddScoped<IServiceType, ServiceType>();
+
+        collection.AddScoped<Lazy<IServiceType>>(provider => new(
+            () => provider.GetRequiredService<IServiceType>()));
     }
 
     public static void AddSwaggerServiceExtension(this WebApplicationBuilder builder)
@@ -153,6 +177,70 @@ public static class WebApplicationBuilderExtension
                     .AllowAnyHeader()
                     .WithExposedHeaders(CustomHeader.Pagination); ;
             });
+        });
+    }
+
+    public static void AddIdentityCoreExtension(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddDataProtection();
+
+        builder.Services.AddIdentityCore<ApplicationUser>(opt =>
+        {
+            opt.Password.RequireDigit = false;
+            opt.Password.RequireLowercase = false;
+            opt.Password.RequireUppercase = false;
+            opt.Password.RequireNonAlphanumeric = false;
+            opt.Password.RequiredLength = 8;
+
+        })
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<MovieContext>()
+            .AddDefaultTokenProviders();
+    }
+
+    public static void AddAuthenticationExtension(this WebApplicationBuilder builder)
+    {
+
+        var secretkey = AppConfig.GetSecretKey(builder.Configuration);
+        ArgumentNullException.ThrowIfNull(secretkey, nameof(secretkey));
+
+        var jwtConfiguration = new JWTConfiguration();
+        builder.Configuration.Bind(JWTConfiguration.Section, jwtConfiguration);
+
+        builder.Services.AddSingleton<IJWTConfiguration>(jwtConfiguration);
+
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtConfiguration.Issuer,
+                ValidAudience = jwtConfiguration.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretkey))
+            };
+
+        });
+    }
+
+    public static void AddAuthorizationExtension(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy("AdminPolicy", policy =>
+                policy.RequireRole("Admin")
+                      .RequireClaim(ClaimTypes.NameIdentifier)
+                      .RequireClaim(ClaimTypes.Role));
+
+            options.AddPolicy("UserPolicy", policy =>
+                policy.RequireRole("User"));
         });
     }
 }

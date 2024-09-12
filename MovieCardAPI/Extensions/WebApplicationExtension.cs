@@ -6,18 +6,33 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using MovieCardAPI.Model.Exeptions;
+using Microsoft.AspNetCore.Identity;
+using MovieCardAPI.Entities;
 
 namespace MovieCardAPI.Extensions;
 
 public static class WebApplicationExtension
 {
+    public static void UseConfigValidationExtension(this IApplicationBuilder applicationBuilder)
+    {
+        using var scope = applicationBuilder.ApplicationServices.CreateScope();
+        var serviceProvider = scope.ServiceProvider;
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+
+        AppConfig.Validate(configuration);
+    }
+
     public static async Task UseDataSeedAsyncExtension(this IApplicationBuilder applicationBuilder)
     {   
         using var scope = applicationBuilder.ApplicationServices.CreateScope();
         var serviceProvider = scope.ServiceProvider;
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+        var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
         var context = serviceProvider.GetRequiredService<MovieContext>();
         await context.Database.MigrateAsync();
-        await SeedMovieDB.RunAsync(context);
+        await SeedMovieDB.RunAsync(context, configuration, userManager, roleManager);
     }
 
     public static void UseCORSPolicyExtension(this WebApplication application)

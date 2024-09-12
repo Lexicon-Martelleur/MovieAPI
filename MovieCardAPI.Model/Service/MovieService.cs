@@ -10,9 +10,9 @@ public class MovieService : IMovieService
 {
     private readonly IUnitOfWork _uow;
 
-    private readonly IMapper _mapper;
+    private readonly ICustomMapper _mapper;
 
-    public MovieService(IUnitOfWork uow, IMapper mapper)
+    public MovieService(IUnitOfWork uow, ICustomMapper mapper)
     {
         _uow = uow ?? throw new ArgumentNullException(nameof(uow));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));

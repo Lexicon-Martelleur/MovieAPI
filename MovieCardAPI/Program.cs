@@ -24,12 +24,16 @@ public class Program
         builder.AddApplicationDependenciesExtension();
         builder.AddSwaggerServiceExtension();
         builder.AddCORSPolicyExtension();
+        builder.AddIdentityCoreExtension();
+        builder.AddAuthenticationExtension();
         return builder.Build();
     }
 
     private async static Task ConfigureWebApplicationPipeline(WebApplication app)
     {
+        app.UseConfigValidationExtension();
         app.UseCORSPolicyExtension();
+
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
@@ -41,6 +45,8 @@ public class Program
             app.UseHttpsRedirection();
             app.UseGlobalExceptionHandlerExtension();
         }
+
+        app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
         app.Run();
