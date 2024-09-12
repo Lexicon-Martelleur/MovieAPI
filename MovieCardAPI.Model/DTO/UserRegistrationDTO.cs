@@ -15,6 +15,10 @@ public record UserRegistrationDTO
     public string Email { get; init; } = String.Empty;
 
     [Required]
-    public string Role { get; init; } = String.Empty;
+    public string Name { get; init; } = String.Empty;
+
+
+    [Required]
+    public string Position { get; init; } = String.Empty;
 
 }

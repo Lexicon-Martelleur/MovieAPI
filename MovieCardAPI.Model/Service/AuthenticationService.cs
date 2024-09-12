@@ -6,7 +6,6 @@ using MovieCardAPI.Constants;
 using MovieCardAPI.Entities;
 using MovieCardAPI.Model.Configuration;
 using MovieCardAPI.Model.DTO;
-using MovieCardAPI.Model.Utility;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -30,54 +29,72 @@ public class AuthenticationService : IAuthenticationService
         RoleManager<IdentityRole> roleManager,
         IConfiguration configuration)
     {
-        this._jwtConfiguration = jwtConfiguration;
-        this._mapper = mapper;
-        this._userManager = userManager;
-        this._roleManager = roleManager;
-        this._configuration = configuration;
+        _jwtConfiguration = jwtConfiguration;
+        _mapper = mapper;
+        _userManager = userManager;
+        _roleManager = roleManager;
+        _configuration = configuration;
+    }
+
+    public async Task<IdentityResult> RegisterUserAsync(UserRegistrationDTO userDTO)
+    {
+        ArgumentNullException.ThrowIfNull(userDTO, nameof(userDTO));
+
+        var roleExists = await _roleManager.RoleExistsAsync(userDTO.Position);
+        if (!roleExists)
+        {
+            return IdentityResult.Failed(new IdentityError { Description = "Role does not exist" });
+        }
+
+        var user = _mapper.Map<ApplicationUser>(userDTO);
+        var result = await _userManager.CreateAsync(user, userDTO.Password);
+        if (result.Succeeded)
+        {
+            await _userManager.AddToRoleAsync(user, userDTO.Position);
+        }
+        return result;
+    }
+
+    public async Task<bool> ValidateUserAsync(UserAuthenticationDTO userDTO)
+    {
+        ArgumentNullException.ThrowIfNull(userDTO, nameof(userDTO));
+
+        _user = await _userManager.FindByNameAsync(userDTO.UserName!);
+
+        return _user != null && await _userManager.CheckPasswordAsync(_user, userDTO.Password!);
+
     }
 
     public async Task<TokenDTO> CreateTokenAsync(bool expireTime)
     {
-        //signingCredentials signing = GetSigningCredentials();
-        //IEnumerable<Claim> claims = await GetClaimsAsync();
-        //JwtSecurityToken tokenOptions = GenerateTokenOptions(signing, claims);
+        SigningCredentials signing = GetSigningCredentials();
+        IEnumerable<Claim> claims = await GetClaimsAsync();
+        JwtSecurityToken tokenOptions = GenerateTokenOptions(signing, claims);
 
-        //ArgumentNullException.ThrowIfNull(user, nameof(user));
+        ArgumentNullException.ThrowIfNull(_user, nameof(_user));
 
-        //user.RefreshToken = GenerateRefreshToken();
+        _user.RefreshToken = GenerateRefreshToken();
 
-        //if (expireTime)
-        //    user.RefreshTokenExpireTime = DateTime.UtcNow.AddDays(2);
+        if (expireTime)
+            _user.RefreshTokenExpireTime = DateTime.UtcNow.AddDays(2);
 
-        //var res = await userManager.UpdateAsync(user); //ToDo validate res!
-        //var accessToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+        // TODO validate identityResult!
+        var identityResult = await _userManager.UpdateAsync(_user);
+        var accessToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
 
-        //return new TokenDto(accessToken, user.RefreshToken);
-        throw new NotImplementedException();
+        return new TokenDTO(accessToken, _user.RefreshToken);
     }
 
-    private string GenerateRefreshToken()
+    private SigningCredentials GetSigningCredentials()
     {
-        var randomNumber = new byte[32];
-        using var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(randomNumber);
-        return Convert.ToBase64String(randomNumber);
-    }
+        var secretKey = AppConfig.GetSecretKey(_configuration);
+        ArgumentNullException.ThrowIfNull(secretKey, nameof(secretKey));
 
-    private JwtSecurityToken GenerateTokenOptions(SigningCredentials signing, IEnumerable<Claim> claims)
-    {
-        //var jwtSettings = configuration.GetSection("JwtSettings");
+        var key = Encoding.UTF8.GetBytes(secretKey);
+        var secret = new SymmetricSecurityKey(key);
 
-        //var tokenOptions = new JwtSecurityToken(
-        //    issuer: jwtConfiguration.Issuer,
-        //    audience: jwtConfiguration.Audience,
-        //    claims: claims,
-        //    expires: DateTime.Now.AddMinutes(Convert.ToDouble(jwtSettings["Expires"])),
-        //    signingCredentials: signing);
+        return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
 
-        //return tokenOptions;
-        throw new NotImplementedException();
     }
 
     private async Task<IEnumerable<Claim>> GetClaimsAsync()
@@ -100,48 +117,27 @@ public class AuthenticationService : IAuthenticationService
         return claims;
     }
 
-    private SigningCredentials GetSigningCredentials()
+    private JwtSecurityToken GenerateTokenOptions(SigningCredentials signing, IEnumerable<Claim> claims)
     {
-        var secretKey = AppConfig.GetSecretKey(_configuration);
-        ArgumentNullException.ThrowIfNull(secretKey, nameof(secretKey));
+        var jwtSettings = _configuration.GetSection("JwtSettings");
 
-        var key = Encoding.UTF8.GetBytes(secretKey);
-        var secret = new SymmetricSecurityKey(key);
+        var tokenOptions = new JwtSecurityToken(
+            issuer: _jwtConfiguration.Issuer,
+            audience: _jwtConfiguration.Audience,
+            claims: claims,
+            expires: DateTime.Now.AddMinutes(Convert.ToDouble(jwtSettings["Expires"])),
+            signingCredentials: signing);
 
-        return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
-
+        return tokenOptions;
+        throw new NotImplementedException();
     }
 
-    public async Task<IdentityResult> RegisterUserAsync(UserRegistrationDTO userDTO)
+    private string GenerateRefreshToken()
     {
-        ArgumentNullException.ThrowIfNull(userDTO, nameof(userDTO));
-
-        var roleExists = await _roleManager.RoleExistsAsync(userDTO.Role!);
-        if (!roleExists)
-        {
-            return IdentityResult.Failed(new IdentityError { Description = "Role does not exist" });
-        }
-
-        var user = _mapper.Map<ApplicationUser>(userDTO);
-
-        var result = await _userManager.CreateAsync(user, userDTO.Password);
-
-        if (result.Succeeded)
-        {
-            await _userManager.AddToRoleAsync(user, userDTO.Role!);
-        }
-
-        return result;
-    }
-
-    public async Task<bool> ValidateUserAsync(UserAuthenticationDTO userDTO)
-    {
-        ArgumentNullException.ThrowIfNull(userDTO, nameof(userDTO));
-
-        _user = await _userManager.FindByNameAsync(userDTO.UserName!);
-
-        return _user != null && await _userManager.CheckPasswordAsync(_user, userDTO.Password!);
-
+        var randomNumber = new byte[32];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+        return Convert.ToBase64String(randomNumber);
     }
 
     public async Task<TokenDTO> RefreshTokenAsync(TokenDTO token)

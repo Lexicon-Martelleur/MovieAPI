@@ -26,7 +26,7 @@ public class AuthenticationController : ControllerBase
         return result.Succeeded ? StatusCode(StatusCodes.Status201Created) : BadRequest(result.Errors);
     }
 
-    [HttpPost("/login")]
+    [HttpPost("login")]
     [AllowAnonymous]
     public async Task<IActionResult> Authenticate(
         [FromBody] UserAuthenticationDTO user)

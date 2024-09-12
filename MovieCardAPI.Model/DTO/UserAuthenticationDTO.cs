@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace MovieCardAPI.Model.DTO;
-public record UserAuthenticationDTO
+public class UserAuthenticationDTO
 {
     [Required]
     public string? UserName { get; init; }
