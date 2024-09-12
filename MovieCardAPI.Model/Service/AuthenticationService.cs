@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MovieCardAPI.Constants;
 using MovieCardAPI.Entities;
@@ -56,14 +55,19 @@ public class AuthenticationService : IAuthenticationService
         return result;
     }
 
+    /**
+     * TODO Return user and then use it in Create token
+     * instead of a user field.
+     */
     public async Task<bool> ValidateUserAsync(UserAuthenticationDTO userDTO)
     {
         ArgumentNullException.ThrowIfNull(userDTO, nameof(userDTO));
 
         _user = await _userManager.FindByNameAsync(userDTO.UserName!);
+        var validUserPwd = _user != null && 
+            await _userManager.CheckPasswordAsync(_user, userDTO.Password!);
 
         return _user != null && await _userManager.CheckPasswordAsync(_user, userDTO.Password!);
-
     }
 
     public async Task<TokenDTO> CreateTokenAsync(bool expireTime)
@@ -77,7 +81,10 @@ public class AuthenticationService : IAuthenticationService
         _user.RefreshToken = GenerateRefreshToken();
 
         if (expireTime)
-            _user.RefreshTokenExpireTime = DateTime.UtcNow.AddDays(2);
+        {
+            _user.RefreshTokenExpireTime = DateTime.UtcNow.AddDays(
+                AppConfig.RefreshTokenExpireTime);
+        }
 
         // TODO validate identityResult!
         var identityResult = await _userManager.UpdateAsync(_user);
@@ -133,10 +140,10 @@ public class AuthenticationService : IAuthenticationService
 
     private string GenerateRefreshToken()
     {
-        var randomNumber = new byte[32];
-        using var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(randomNumber);
-        return Convert.ToBase64String(randomNumber);
+        var byteArray = new byte[32];
+        using var generator = RandomNumberGenerator.Create();
+        generator.GetBytes(byteArray);
+        return Convert.ToBase64String(byteArray);
     }
 
     public async Task<TokenDTO> RefreshTokenAsync(TokenDTO token)

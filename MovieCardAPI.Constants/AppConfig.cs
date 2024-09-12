@@ -4,6 +4,8 @@ namespace MovieCardAPI.Constants;
 
 public class AppConfig
 {
+    public const int RefreshTokenExpireTime = 2;
+
     public static string GetPassword(
         IConfiguration configuration
     ) => configuration["password"] ??  throw new Exception("password not exist in config");
