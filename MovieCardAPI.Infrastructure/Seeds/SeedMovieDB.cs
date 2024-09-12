@@ -193,7 +193,6 @@ public static class SeedMovieDB
         return movieGenres;
     }
 
-
     private static async Task CreateUserRolesAsync(
         RoleManager<IdentityRole> roleManager)
     {

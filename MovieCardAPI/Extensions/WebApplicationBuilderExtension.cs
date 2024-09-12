@@ -181,7 +181,7 @@ public static class WebApplicationBuilderExtension
 
         var jwtConfiguration = new JWTConfiguration();
         builder.Configuration.Bind(JWTConfiguration.Section, jwtConfiguration);
-
+        
         builder.Services.AddSingleton<IJWTConfiguration>(jwtConfiguration);
 
         builder.Services.AddAuthentication(options =>

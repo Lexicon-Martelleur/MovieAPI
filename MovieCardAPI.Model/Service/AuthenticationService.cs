@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MovieCardAPI.Constants;
 using MovieCardAPI.Entities;
@@ -119,17 +120,15 @@ public class AuthenticationService : IAuthenticationService
 
     private JwtSecurityToken GenerateTokenOptions(SigningCredentials signing, IEnumerable<Claim> claims)
     {
-        var jwtSettings = _configuration.GetSection("JwtSettings");
-
+        var expireTime = Convert.ToDouble(_jwtConfiguration.Expires);
         var tokenOptions = new JwtSecurityToken(
             issuer: _jwtConfiguration.Issuer,
             audience: _jwtConfiguration.Audience,
             claims: claims,
-            expires: DateTime.Now.AddMinutes(Convert.ToDouble(jwtSettings["Expires"])),
+            expires: DateTime.Now.AddMinutes(expireTime),
             signingCredentials: signing);
 
         return tokenOptions;
-        throw new NotImplementedException();
     }
 
     private string GenerateRefreshToken()
@@ -160,8 +159,6 @@ public class AuthenticationService : IAuthenticationService
 
     private ClaimsPrincipal GetPrincipalFromExpiredToken(string accessToken)
     {
-        var jwtSettings = _configuration.GetSection(JWTConfiguration.Section);
-
         var secretKey = AppConfig.GetSecretKey(_configuration);
         ArgumentNullException.ThrowIfNull(nameof(secretKey));
 
@@ -171,8 +168,8 @@ public class AuthenticationService : IAuthenticationService
             ValidateAudience = true,
             ValidateLifetime = false,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtSettings["Issuer"],
-            ValidAudience = jwtSettings["Audience"],
+            ValidIssuer = _jwtConfiguration.Issuer,
+            ValidAudience = _jwtConfiguration.Audience,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!))
         };
 

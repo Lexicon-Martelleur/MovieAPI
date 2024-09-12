@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,6 +13,7 @@ namespace MovieCardAPI.Presentation.Controllers;
 
 [ApiController]
 [Route(AppRouter.MOVIE)]
+[Authorize]
 public class MovieController : ControllerBase
 {
     private readonly ILogger<MovieController> _logger;
