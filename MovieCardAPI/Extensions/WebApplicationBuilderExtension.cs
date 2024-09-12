@@ -115,39 +115,60 @@ public static class WebApplicationBuilderExtension
     private static void AddApplicationServices(IServiceCollection collection)
     {
         collection.AddAutoMapper(typeof(AutoMapperProfile));
-        collection.AddScoped<IServiceManager, ServiceManager>();
-        collection.AddScoped<IMovieService, MovieService>();
-        collection.AddScoped<IActorService, ActorService>();
-        collection.AddScoped<IDirectorService, DirectorService>();
-        collection.AddScoped<IGenreService, GenreService>();
-        collection.AddScoped<IAuthenticationService, AuthenticationService>();
+        collection.AddWithLazy<IServiceManager, ServiceManager>();
+        collection.AddWithLazy<IMovieService, MovieService>();
+        collection.AddWithLazy<IActorService, ActorService>();
+        collection.AddWithLazy<IDirectorService, DirectorService>();
+        collection.AddWithLazy<IGenreService, GenreService>();
+        collection.AddWithLazy<IAuthenticationService, AuthenticationService>();
 
-        collection.AddScoped<Lazy<IMovieService>>(provider => new(
-            () => provider.GetRequiredService<IMovieService>()));
+        //collection.AddScoped<IMovieService, MovieService>();
+        //collection.AddScoped<IActorService, ActorService>();
+        //collection.AddScoped<IDirectorService, DirectorService>();
+        //collection.AddScoped<IGenreService, GenreService>();
+        //collection.AddScoped<IAuthenticationService, AuthenticationService>();
 
-        collection.AddScoped<Lazy<IActorService>>(provider => new(
-            () => provider.GetRequiredService<IActorService>()));
+        //collection.AddScoped<Lazy<IMovieService>>(provider => new(
+        //    () => provider.GetRequiredService<IMovieService>()));
 
-        collection.AddScoped<Lazy<IDirectorService>>(provider => new(
-            () => provider.GetRequiredService<IDirectorService>()));
+        //collection.AddScoped<Lazy<IActorService>>(provider => new(
+        //    () => provider.GetRequiredService<IActorService>()));
 
-        collection.AddScoped<Lazy<IGenreService>>(provider => new(
-            () => provider.GetRequiredService<IGenreService>()));
+        //collection.AddScoped<Lazy<IDirectorService>>(provider => new(
+        //    () => provider.GetRequiredService<IDirectorService>()));
 
-        collection.AddScoped<Lazy<IAuthenticationService>>(provider => new(
-            () => provider.GetRequiredService<IAuthenticationService>()));
+        //collection.AddScoped<Lazy<IGenreService>>(provider => new(
+        //    () => provider.GetRequiredService<IGenreService>()));
+
+        //collection.AddScoped<Lazy<IAuthenticationService>>(provider => new(
+        //    () => provider.GetRequiredService<IAuthenticationService>()));
     }
 
     // TODO Use this for services and repositories.
-    private static void AddScopedLazyService<IServiceType, ServiceType>(
-        IServiceCollection collection)
+    internal static void AddWithLazy<IServiceType, ServiceType>(
+        this IServiceCollection collection,
+        string scope = "scope")
         where ServiceType : class, IServiceType
         where IServiceType : class
     {
-        collection.AddScoped<IServiceType, ServiceType>();
-
-        collection.AddScoped<Lazy<IServiceType>>(provider => new(
-            () => provider.GetRequiredService<IServiceType>()));
+        switch (scope)
+        {
+            case "singleton":
+                collection.AddSingleton<IServiceType, ServiceType>();
+                collection.AddSingleton<Lazy<IServiceType>>(provider => new(
+                    () => provider.GetRequiredService<IServiceType>()));
+                break;
+            case "transient":
+                collection.AddTransient<IServiceType, ServiceType>();
+                collection.AddTransient<Lazy<IServiceType>>(provider => new(
+                    () => provider.GetRequiredService<IServiceType>()));
+                break;
+            default:
+                collection.AddScoped<IServiceType, ServiceType>();
+                collection.AddScoped<Lazy<IServiceType>>(provider => new(
+                    () => provider.GetRequiredService<IServiceType>()));
+                break;
+        }
     }
 
     public static void AddSwaggerServiceExtension(this WebApplicationBuilder builder)
