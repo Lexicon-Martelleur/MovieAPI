@@ -4,6 +4,8 @@ internal class AppRouter
 {
     internal const string AUTH = "api/authenticate";
 
+    internal const string TOKEN = "api/token";
+
     internal const string MOVIE = "api/movies";
 
     internal const string ACTOR = "api/actors";
