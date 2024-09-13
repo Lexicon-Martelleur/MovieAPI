@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using MovieCardAPI.Model.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using MovieCardAPI.Entities;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MovieCardAPI.Extensions;
 
@@ -100,6 +101,13 @@ public static class WebApplicationExtension
                     context,
                     statusCode: StatusCodes.Status401Unauthorized,
                     title: exception.Title,
+                    detail: exception.Message);
+                break;
+            case SecurityTokenException exception:
+                problemDetails = problemDetailsFactory.CreateProblemDetails(
+                    context,
+                    statusCode: StatusCodes.Status401Unauthorized,
+                    title: "Bad Request",
                     detail: exception.Message);
                 break;
             case NotFoundException exception:

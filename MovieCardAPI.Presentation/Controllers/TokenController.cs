@@ -6,8 +6,8 @@ using MovieCardAPI.Presentation.Constants;
 
 namespace MovieCardAPI.Presentation.Controllers;
 
-[Route(AppRouter.TOKEN)]
 [ApiController]
+[Route(AppRouter.TOKEN)]
 public class TokenController : ControllerBase
 {
     private readonly IServiceManager _mgr;

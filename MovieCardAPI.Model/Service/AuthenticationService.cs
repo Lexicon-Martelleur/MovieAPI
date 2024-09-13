@@ -126,6 +126,11 @@ public class AuthenticationService : IAuthenticationService
         return claims;
     }
 
+    /**
+     * TODO! Refresh is occasionally not working. In some cases an non handled
+     * custom TokenExpiredException is thrown. This error is set to be handled
+     * globally.
+     */
     private JwtSecurityToken GenerateTokenOptions(SigningCredentials signing, IEnumerable<Claim> claims)
     {
         var expireTime = Convert.ToDouble(_jwtConfiguration.Expires);
@@ -135,7 +140,6 @@ public class AuthenticationService : IAuthenticationService
             claims: claims,
             expires: DateTime.Now.AddMinutes(expireTime),
             signingCredentials: signing);
-
         return tokenOptions;
     }
 
@@ -151,7 +155,8 @@ public class AuthenticationService : IAuthenticationService
     {
         ClaimsPrincipal principal = GetPrincipalFromExpiredToken(token.AccessToken);
 
-        ApplicationUser? user = await _userManager.FindByNameAsync(principal.Identity?.Name!);
+        ApplicationUser? user = await _userManager.FindByNameAsync(principal.Identity?.Name ??
+            throw new TokenExpiredException());
 
         var invalidToken = user == null ||
             user.RefreshToken != token.RefreshToken ||
