@@ -5,7 +5,7 @@ using MovieCardAPI.Constants;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
-using MovieCardAPI.Model.Exeptions;
+using MovieCardAPI.Model.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using MovieCardAPI.Entities;
 
@@ -95,6 +95,13 @@ public static class WebApplicationExtension
 
         switch (error)
         {
+            case TokenExpiredException exception:
+                problemDetails = problemDetailsFactory.CreateProblemDetails(
+                    context,
+                    statusCode: StatusCodes.Status401Unauthorized,
+                    title: exception.Title,
+                    detail: exception.Message);
+                break;
             case NotFoundException exception:
                 problemDetails = problemDetailsFactory.CreateProblemDetails(
                     context,
@@ -116,7 +123,13 @@ public static class WebApplicationExtension
                     title: "Resource not implemented",
                     detail: exception.Message);
                 break;
-            default: break;
+            default: 
+                problemDetails = problemDetailsFactory.CreateProblemDetails(
+                    context,
+                    statusCode: StatusCodes.Status503ServiceUnavailable,
+                    title: "Resource not implemented",
+                    detail: "Unknown error");
+                break;
         }
         context.Response.StatusCode = problemDetails.Status
             ?? StatusCodes.Status500InternalServerError;

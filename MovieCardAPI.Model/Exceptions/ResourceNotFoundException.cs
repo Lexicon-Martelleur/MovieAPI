@@ -1,4 +1,4 @@
-﻿namespace MovieCardAPI.Model.Exeptions;
+﻿namespace MovieCardAPI.Model.Exceptions;
 
 public class ResourceNotFoundException : NotFoundException
 {

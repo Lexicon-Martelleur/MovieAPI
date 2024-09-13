@@ -113,15 +113,10 @@ public static class WebApplicationBuilderExtension
             typeof(ServiceType),
             lifetime));
 
-        Func<IServiceProvider, object> lazyFactory = provider =>
-        {
-            return new Lazy<IServiceType>(() =>
-                provider.GetRequiredService<IServiceType>());
-        };
-
         collection.Add(new ServiceDescriptor(
             typeof(Lazy<IServiceType>),
-            lazyFactory,
+            provider => new Lazy<IServiceType>(
+                () => provider.GetRequiredService<IServiceType>()),
             lifetime));
     }
 
@@ -175,7 +170,6 @@ public static class WebApplicationBuilderExtension
 
     public static void AddAuthenticationExtension(this WebApplicationBuilder builder)
     {
-
         var secretkey = AppConfig.GetSecretKey(builder.Configuration);
         ArgumentNullException.ThrowIfNull(secretkey, nameof(secretkey));
 
@@ -189,20 +183,21 @@ public static class WebApplicationBuilderExtension
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         })
-        .AddJwtBearer(options =>
-        {
-            options.TokenValidationParameters = new TokenValidationParameters
+            .AddJwtBearer(options =>
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtConfiguration.Issuer,
-                ValidAudience = jwtConfiguration.Audience,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretkey))
-            };
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtConfiguration.Issuer,
+                    ValidAudience = jwtConfiguration.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretkey))
+                };
 
-        });
+            });
     }
 
     public static void AddAuthorizationExtension(this WebApplicationBuilder builder)

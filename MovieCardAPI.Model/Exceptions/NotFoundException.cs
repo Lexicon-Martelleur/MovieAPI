@@ -1,11 +1,9 @@
-﻿namespace MovieCardAPI.Model.Exeptions;
+﻿namespace MovieCardAPI.Model.Exceptions;
 
 public abstract class NotFoundException(
     string message, 
-    string title = "Not Found") : Exception(message)
+    string title = "Not Found") : APIException(message, title)
 {
-    public string Title { get; } = title;
-
     protected static string GetMsg<IdType>(
         string resource,
         IdType id) =>

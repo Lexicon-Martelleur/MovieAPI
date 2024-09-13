@@ -1,5 +1,5 @@
 ﻿using MovieCardAPI.Model.DTO;
-using MovieCardAPI.Model.Exeptions;
+using MovieCardAPI.Model.Exceptions;
 using MovieCardAPI.Model.Repository;
 using MovieCardAPI.Model.Utility;
 

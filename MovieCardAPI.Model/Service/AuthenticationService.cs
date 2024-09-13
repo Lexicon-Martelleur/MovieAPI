@@ -6,6 +6,7 @@ using MovieCardAPI.Constants;
 using MovieCardAPI.Entities;
 using MovieCardAPI.Model.Configuration;
 using MovieCardAPI.Model.DTO;
+using MovieCardAPI.Model.Exceptions;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -82,7 +83,7 @@ public class AuthenticationService : IAuthenticationService
 
         if (expireTime)
         {
-            _user.RefreshTokenExpireTime = DateTime.UtcNow.AddDays(
+            _user.RefreshTokenExpireTime = DateTime.Now.AddDays(
                 AppConfig.RefreshTokenExpireTime);
         }
 
@@ -156,8 +157,7 @@ public class AuthenticationService : IAuthenticationService
             user.RefreshToken != token.RefreshToken ||
             user.RefreshTokenExpireTime <= DateTime.Now;
 
-        //TODO: Should be handled with middle-ware and custom exception class
-        if (invalidToken) { throw new ArgumentException("Invalid TokenDTO"); }
+        if (invalidToken) { throw new TokenExpiredException(); }
 
         _user = user;
 
