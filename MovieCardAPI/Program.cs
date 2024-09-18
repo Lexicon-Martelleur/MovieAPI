@@ -52,9 +52,17 @@ public class Program
         app.Run();
     }
 
-    private static void AddDebug()
+    private static void AddingDebug()
     {
         Console.WriteLine("clean...");
         Console.WriteLine("cleaning...");
+        return "...";
+    }
+
+     private static void RemovingDebug()
+    {
+        Console.WriteLine("clean...");
+        Console.WriteLine("cleaning...");
+        return "";
     }
 }
