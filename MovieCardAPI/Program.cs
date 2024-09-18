@@ -51,32 +51,4 @@ public class Program
         app.MapControllers();
         app.Run();
     }
-
-    private static string AddDebug()
-    {
-        Console.WriteLine("clean...");
-        Console.WriteLine("update");
-        return "Adding";
-    }
-
-    private static string RemoveDebug()
-    {
-        Console.WriteLine("clean...");
-        Console.WriteLine("update");
-        return "Removing";
-    }
-
-    private static string UpdateDebug()
-    {
-        Console.WriteLine("clean...");
-        Console.WriteLine("update");
-        return "Updating";
-    }
-
-    private static string DeleteDebug()
-    {
-        Console.WriteLine("clean...");
-        Console.WriteLine("cleaning...");
-        return "";
-    }
 }
