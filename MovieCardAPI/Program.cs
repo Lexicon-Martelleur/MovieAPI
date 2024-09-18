@@ -76,6 +76,6 @@ public class Program
     private static string DeleteDebug()
     {
         Console.WriteLine("clean...");
-        return "cleaning";
+        Console.WriteLine("cleaning...");
     }
 }
