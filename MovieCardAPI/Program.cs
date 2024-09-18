@@ -55,6 +55,6 @@ public class Program
 
     private static void AddDebug()
     {
-        Console.WriteLine("debug...");
+        Console.WriteLine("clean...");
     }
 }
