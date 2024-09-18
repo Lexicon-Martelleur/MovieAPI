@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using MovieCardAPI.Extensions;
 
 namespace MovieCardAPI;
@@ -50,5 +51,10 @@ public class Program
         app.UseAuthorization();
         app.MapControllers();
         app.Run();
+    }
+
+    private static void AddDebug()
+    {
+        Console.WriteLine("debug...");
     }
 }
