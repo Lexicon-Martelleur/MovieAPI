@@ -56,12 +56,13 @@ public class Program
     {
         Console.WriteLine("clean...");
         Console.WriteLine("update");
-        return "Adding";
+        return "Add";
     }
 
     private static string RemoveDebug()
     {
         Console.WriteLine("clean...");
+        Console.WriteLine("update");
         Console.WriteLine("update");
         return "Removing";
     }
@@ -70,6 +71,7 @@ public class Program
     {
         Console.WriteLine("clean...");
         Console.WriteLine("update");
+        Console.WriteLine("update");
         return "Updating";
     }
 
@@ -77,6 +79,6 @@ public class Program
     {
         Console.WriteLine("clean...");
         Console.WriteLine("cleaning...");
-        return "";
+        return "Deleting...";
     }
 }
