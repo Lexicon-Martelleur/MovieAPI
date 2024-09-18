@@ -77,5 +77,6 @@ public class Program
     {
         Console.WriteLine("clean...");
         Console.WriteLine("cleaning...");
+        return "";
     }
 }
