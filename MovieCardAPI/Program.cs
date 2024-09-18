@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using MovieCardAPI.Extensions;
 
 namespace MovieCardAPI;
